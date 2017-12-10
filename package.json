@@ -1,0 +1,33 @@
+{
+  "name": "punker",
+  "version": "2.0.1",
+  "description": "Simple and powerful build system",
+  "main": "index.js",
+  "author": "egorgl",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-vue-app": "^2.0.0",
+    "babelify": "^8.0.0",
+    "browserify": "^14.5.0",
+    "chalk": "^2.3.0",
+    "chokidar": "^1.7.0",
+    "del": "^3.0.0",
+    "file-type": "^7.4.0",
+    "glob": "^7.1.2",
+    "is-buffer": "^1.1.6",
+    "is-svg": "^2.1.0",
+    "log-update": "^2.3.0",
+    "mkdirp": "^0.5.1",
+    "module-deps": "^4.1.1",
+    "req-from": "^2.0.0",
+    "require-resolve": "^0.0.2",
+    "resolve-from": "^4.0.0",
+    "run-parallel": "^1.1.6",
+    "stream-to-promise": "^2.2.0",
+    "window-size": "^1.1.0",
+    "word-wrap": "^1.2.3"
+  }
+}
