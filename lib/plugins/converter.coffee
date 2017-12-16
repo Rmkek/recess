@@ -17,42 +17,27 @@ module.exports = (punk, reporter) ->
 	plugin = {}
 	plugin.pipes =
 		convert: (settings) ->
-			settings = {format: settings} if typeof settings isnt 'object'
-
-			(files) ->
+			(files, cond) ->
 				for name, file of files
-					# get type of file
-					tp = type(file)
-					unless tp
-						tp = {ext: getExt name}
-					ext = tp.ext
-					ext = 'svg' if isSvg file
+					ext = punk.d.getType(name, file)	
 
 
-					if punk.converters[ext] and punk.converters[ext][settings.format]
+					# if there's needed converter
+					if punk.converters[ext] and punk.converters[ext][settings]
 						regexp = new RegExp (ext + '$'), 'i'
-						newName = name.replace regexp, settings.format
-						pipe = punk.converters[ext][settings.format]
+						newName = name.replace regexp, settings
+						pipe = punk.converters[ext][settings]
 
 						# pipe file
-						try
-							s = {}
-							s[name] = file
-							p = pipe s
-							if p instanceof Promise
-									p.catch (e) -> reporter.error e
-									files[newName] = (await p)[name]
-								else
-									files[newName] = p[name]
-							p = bufferize p
-						catch e
-							reporter.error e				
+						files[newName] = Buffer.from (await pipe(files, cond))[name]
+						delete files[name]
 					else
 						# remove file
 						delete files[name]
-						reporter.noType name
+						reporter.noConverter name, ext
 
 				files
-	plugin.to = plugin.convert
+
+	plugin.pipes.to = plugin.pipes.ex = plugin.pipes.convert
 
 	plugin

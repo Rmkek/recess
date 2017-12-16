@@ -49,7 +49,8 @@ module.exports = (punk, reporter) ->
 								# next pipe
 								resolve files
 
-					# bind each file
-					for name, contents of files
-						bnd name, contents
+
+					await punk.d.mapAsync files, (contents, name) ->
+						await bnd name, contents
+
 	plugin

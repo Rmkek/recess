@@ -1,15 +1,23 @@
 punk = require './index.js'
+{ p } = punk
 
-config = {
-		bundle: {
-			entry: 'test/main.js'
-			pipes: punk.p.bundle()
-			outFile: 'main.min.js'
-		}
-		images: {
-			entry: 'test/*.svg'
-			to: 'png'
-		}
-	}
+punk.use require 'punker-convert-images'
+punk.use require 'punker-uglify'
+
+config = 
+	bundle: [
+		entry: 'img.svg'
+		outFile: 'img.png'
+	]
+	js: [
+		entry: 'lib/dev.js'
+		p.minify()
+		outFile: 'dev.js'
+	]
+
+	# images: [
+	# 	entry: 'test/*.svg'
+	# 	to: 'png'
+	# ]
 
 punk.run config

@@ -15,7 +15,7 @@ jst = (text) ->
 	{ width } = size.get()
 	wrap text, { width: width - 15 - 1, indent: '' } 
 
-module.exports =
+reporter = 
 	map:
 		space: []
 		start: []
@@ -39,8 +39,8 @@ module.exports =
 		]
 
 	start: ->
-		reporter.map.start.push => ""
-		reporter.map.start.push => " #{chalk.bold reporter.time()}   #{chalk.grey '»'} #{chalk.bold 'Starting build!'}"
+		reporter.map.start.push do => ""
+		reporter.map.start.push do => " #{chalk.bold reporter.time()}   #{chalk.grey '»'} #{chalk.bold 'Starting build!'}"
 		reporter.render()
 
 	time: ->
@@ -61,14 +61,14 @@ module.exports =
 		"#{hoursString}:#{minutesString}:#{secondsString}"
 
 	usingConfig: (path) ->
-		reporter.map.usingConfig.push =>
+		reporter.map.usingConfig.push do =>
 			" #{chalk.bold reporter.time()}   #{chalk.grey '»'} #{chalk.bold 'Using config at'} #{chalk.bold.blue path}!"
 		reporter.render()
 
 
 	message: ->
 		time = reporter.time()
-		reporter.write =>
+		reporter.write do =>
 			text = jst util.format arguments...
 			arr = text.split '\n'
 			prefix = (chalk.grey('│') + " " + chalk.bold(time) + " " + chalk.grey('│') + " " + chalk.grey("»") + " ")
@@ -85,7 +85,7 @@ module.exports =
 
 	warn: ->
 		time = reporter.time()
-		reporter.write =>
+		reporter.write do =>
 			text = jst util.format arguments...
 			arr = text.split '\n'
 			prefix = (chalk.grey('│') + " " + chalk.bold.yellow(time) + " " + chalk.grey('│') + " " + chalk.yellow("»") + " ")
@@ -100,20 +100,20 @@ module.exports =
 			arr.join '\n'
 
 	error: (err) ->
-		reporter.map.error.push =>
+		reporter.map.error.push do =>
 			f = util.format err
 			arr = f.split '\n'
 			arr = arr.map (s) ->
 				'     ' + s
 			str = chalk.grey('└─ »') + ' ' + chalk.bold(arr.join('\n')[5..])
 			str
-		reporter.map.bottomSeparator = [-> chalk.grey '├──────────┘']
+		reporter.map.bottomSeparator = [chalk.grey '├──────────┘']
 		reporter.end err
 		reporter.render()
 
 	end: (error = false) ->
 		time = reporter.time()
-		reporter.map.built.push =>
+		reporter.map.built.push do =>
 			if error
 				suffix    = chalk.grey('│') + ' '
 				timer     = chalk.bold.red(time) + ' '
@@ -145,7 +145,15 @@ module.exports =
 	noMin: (filename) ->	
 		reporter.warn 'Cannot minify file ' + chalk.blue(filename) + '!'
 
+	noFiles: (glob) ->
+		reporter.warn 'Not found any files at entry ' + chalk.blue(glob) + '!'
 
+	noConverter: (from, to) ->
+		reporter.warn 'Not found converter for convert file ' + chalk.blue(from) + ' to ' + chalk.blue(to) + ' format!' 
+
+	pluginsConflict: (pluginName) ->
+		pl = chalk.blue(pluginName)
+		reporter.warn 'Plugin "' + pl + '" conflicts with existing plugin "' + pl + '"! Falling back to first plugin.'
 
 	write: (text) ->
 		reporter.map.sections.push text
@@ -156,10 +164,8 @@ module.exports =
 		array = []
 		for s in map
 			for p in s
-				if typeof p is 'function'
-					p = p()
 				array = array.concat p
 		str = array.join '\n'
 		update str
 
-reporter = module.exports
+module.exports = (punk) -> { reporter }

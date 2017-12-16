@@ -1,28 +1,35 @@
 module.exports = (punk, reporter) ->
 	plugin = {}
 	plugin.pipes =
-		concat: (settings) ->
+		concat: (settings, separator) ->
 			# set settings to standard form
-			if typeof settings is 'string'
-				settings = { output: settings }
+			if separator? and typeof settings isnt 'object'
+				settings = { output: settings, separator: separator }
+			else if typeof settings isnt 'object'
+				settings = { output: settings, separator: '' }
+			else
+				reporter.error new Error 'Settings not defined!' 
 
 			# PIPE #
 			(files) ->
 
-				# no filename
-				unless settings.output?
-					throw new Error '"concat" needs output file name!'
+				separator = Buffer.from settings.separator
 
-				# data collector
-				arr = []
+				# buffer concat list
+				joinList = []
 
-				# add all files' contents to data collector
 				for name, contents of files
-					arr.push contents
-				
+					joinList.push contents, separator
+				joinList.pop()
+
+				out = Buffer.concat joinList
+
 				# new file storage
 				r = {}
-				# join contents of files
-				r[settings.output] = arr.join settings.separator or ''
+				r[settings.output] = out
+
 				return r
+
+	plugin.pipes.rename = plugin.pipes.concat
+
 	plugin

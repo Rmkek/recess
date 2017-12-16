@@ -17,39 +17,27 @@ module.exports = (punk, reporter) ->
 	plugin = {}
 	plugin.pipes =
 		minify: (settings) ->
-			settings = {format: settings} if typeof settings isnt 'object'
-
-			(files) ->
+			(files, cond) ->
 				for name, file of files
 					# get type of file
-					tp = type(file)
-					unless tp
-						tp = {ext: getExt name}
-					ext = tp.ext
-					ext = 'svg' if isSvg file
+					ext = punk.d.getType(name, file)	
 
-
+					# if there's needed converter
 					if punk.minifiers[ext]
 						pipe = punk.minifiers[ext]
+
+						f = {}
+						f[name] = file
+
 						# pipe file
-						try
-							s = {}
-							s[name] = file
-							p = pipe s
-							if p instanceof Promise
-									p.catch (e) -> reporter.error e
-									files[name] = (await p)[name]
-								else
-									files[name] = p[name]
-							p = bufferize p
-						catch e
-							reporter.error e				
+						files[name] = Buffer.from (await pipe(f, cond))[name]
 					else
 						# remove file
 						delete files[name]
-						reporter.noMin name
+						reporter.noConverter name, ext
 
 				files
-	plugin.min = plugin.minify
+
+	# plugin.pipes.to = plugin.pipes.ex = plugin.pipes.convert
 
 	plugin

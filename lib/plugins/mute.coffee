@@ -1,5 +1,9 @@
 module.exports = ->
 	plugin = {}
 	plugin.pipes =
-		mute: -> -> {}
+		mute: (files)-> 
+			if files
+				{}
+			else
+				-> {}
 	plugin
