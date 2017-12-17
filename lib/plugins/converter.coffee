@@ -24,8 +24,11 @@ module.exports = (punk, reporter) ->
 
 					# if there's needed converter
 					if punk.converters[ext] and punk.converters[ext][settings]
+
+						# get new name
 						regexp = new RegExp (ext + '$'), 'i'
 						newName = name.replace regexp, settings
+						
 						pipe = punk.converters[ext][settings]
 
 						# pipe file

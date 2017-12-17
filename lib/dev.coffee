@@ -4,6 +4,7 @@ path  = require 'path'
 type  = require 'file-type'
 stp   = require 'stream-to-promise'
 svg   = require 'is-svg'
+net   = require 'net'
 { setImmediate } = require 'timers'
 
 module.exports = (punk, reporter) ->
@@ -56,6 +57,10 @@ module.exports = (punk, reporter) ->
 			try ext = 'svg' if svg file
 			ext
 
+		# keep process alive
+		keepAlive: ->
+			net.createServer().listen()
+
 		# difference between this functions is that getExt just returns extname, but getType returns true type of file
 		# e.g. you can rename pic.png to pic.jpg
 		# getExt will say that format is jpg
@@ -91,7 +96,6 @@ module.exports = (punk, reporter) ->
 		eachAsync: (obj, func, cb = ->) ->
 			new Promise (resolve, reject) ->
 				tasks = 0
-				finished = 0
 				for name, value of obj
 					name = name - 0 if ir
 					do (name, value) ->

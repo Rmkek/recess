@@ -13,34 +13,68 @@ util = require 'util'
 
 jst = (text) ->
 	{ width } = size.get()
-	wrap text, { width: width - 15 - 1, indent: '' } 
+	w = wrap text, { width: width - 15 - 1, indent: '' } 
+	n = w.split '\n'
+	regexp = new RegExp '(.{' + (width - 15 - 1) + '}[^\n])', 'g'
+	n2 = for str in n
+		str.replace(regexp, '$1\n')
+	n2.join '\n'
+
+funcs = {}
+
+ex = (s, f) ->
+	reporter.map[s] = [] unless reporter.map[s]		
+	funcs[s] = [] unless funcs[s]		
+	r = f()
+	reporter.map[s].push r
+	funcs[s].push f
+
+# ex = (s, f) ->
+# 	reporter.map[s] = [] unless reporter.map[s]		
+# 	reporter.map[s].push f()
+
+updateMap = ->
+	reporter.map = {}
+	for name, value of funcs
+		reporter.map[name] = (f() for f in value)
+	reporter.render()
+
+process.stdout.on 'resize', updateMap
 
 reporter = 
 	map:
 		space: []
 		start: []
 		usingConfig: []
-		topSeparator: [chalk.grey '┌──────────┐']
+		topSeparator: []
 		sections: []
-		bottomSeparator: [chalk.grey '└──────────┘']
+		bottomSeparator: []
 		built: []
+		exited: []
 		error: []
 
 	nmap: ->
 		[
-			reporter.map.space, 
-			reporter.map.start, 
-			reporter.map.usingConfig, 
-			reporter.map.topSeparator, 
-			reporter.map.sections, 
-			reporter.map.bottomSeparator, 
-			reporter.map.built, 
+			reporter.map.space 
+			reporter.map.start
+			reporter.map.usingConfig
+			reporter.map.topSeparator
+			reporter.map.sections
+			reporter.map.bottomSeparator
+			reporter.map.built
+			reporter.map.exited
 			reporter.map.error
 		]
+		# throw util.format r
 
 	start: ->
-		reporter.map.start.push do => ""
-		reporter.map.start.push do => " #{chalk.bold reporter.time()}   #{chalk.grey '»'} #{chalk.bold 'Starting build!'}"
+		ex 'start', => ""
+		ex 'start', => " #{chalk.bold reporter.time()}   #{chalk.grey '»'} #{chalk.bold jst 'Starting build!'}"
+		reporter.render()
+
+	startWatch: ->
+		ex 'start', => ""
+		ex 'start', => " #{chalk.bold reporter.time()}   #{chalk.grey '»'} #{chalk.bold jst 'Starting watch!'}"
 		reporter.render()
 
 	time: ->
@@ -61,14 +95,15 @@ reporter =
 		"#{hoursString}:#{minutesString}:#{secondsString}"
 
 	usingConfig: (path) ->
-		reporter.map.usingConfig.push do =>
-			" #{chalk.bold reporter.time()}   #{chalk.grey '»'} #{chalk.bold 'Using config at'} #{chalk.bold.blue path}!"
+		ex 'usingConfig', =>
+			u = jst "#{chalk.bold 'Using config at'} #{chalk.bold.blue path}!"
+			" #{chalk.bold reporter.time()}   #{chalk.grey '»'} #{u}"
 		reporter.render()
 
 
 	message: ->
 		time = reporter.time()
-		reporter.write do =>
+		reporter.write =>
 			text = jst util.format arguments...
 			arr = text.split '\n'
 			prefix = (chalk.grey('│') + " " + chalk.bold(time) + " " + chalk.grey('│') + " " + chalk.grey("»") + " ")
@@ -85,7 +120,7 @@ reporter =
 
 	warn: ->
 		time = reporter.time()
-		reporter.write do =>
+		reporter.write =>
 			text = jst util.format arguments...
 			arr = text.split '\n'
 			prefix = (chalk.grey('│') + " " + chalk.bold.yellow(time) + " " + chalk.grey('│') + " " + chalk.yellow("»") + " ")
@@ -100,12 +135,12 @@ reporter =
 			arr.join '\n'
 
 	error: (err) ->
-		reporter.map.error.push do =>
+		ex 'error', =>
 			f = util.format err
 			arr = f.split '\n'
 			arr = arr.map (s) ->
 				'     ' + s
-			str = chalk.grey('└─ »') + ' ' + chalk.bold(arr.join('\n')[5..])
+			str = chalk.grey('└─ »') + ' ' + chalk.bold(jst arr.join('\n')[5..])
 			str
 		reporter.map.bottomSeparator = [chalk.grey '├──────────┘']
 		reporter.end err
@@ -113,17 +148,17 @@ reporter =
 
 	end: (error = false) ->
 		time = reporter.time()
-		reporter.map.built.push do =>
+		ex 'built', =>
 			if error
 				suffix    = chalk.grey('│') + ' '
 				timer     = chalk.bold.red(time) + ' '
 				separator = '  ' + chalk.bold.red('»') + ' '
-				text      = chalk.bold.red 'Unsuccessfully built!'
+				text      = jst chalk.bold.red 'Unsuccessfully built!'
 			else
 				suffix = ' '
 				timer  = chalk.bold(time) + ' '
 				separator = '  ' + chalk.bold.grey('»') + ' '
-				text   = chalk.bold.green 'Successfully built!'
+				text   = jst chalk.bold.green 'Successfully built!'
 			suffix + timer + separator + text
 		reporter.render()
 		process.exit()
@@ -135,6 +170,9 @@ reporter =
 
 	finishedTask: (name) ->
 		reporter.message 'Finished task ' + chalk.blue('#' + name) + '!'
+
+	changed: (name) ->
+		reporter.message 'Updated file ' + chalk.blue(name) + '!'
 
 	finishedAll: ->
 		reporter.message 'Finished all tasks!'
@@ -155,17 +193,28 @@ reporter =
 		pl = chalk.blue(pluginName)
 		reporter.warn 'Plugin "' + pl + '" conflicts with existing plugin "' + pl + '"! Falling back to first plugin.'
 
+
+
 	write: (text) ->
-		reporter.map.sections.push text
+		ex 'sections', text
 		reporter.render()
 
 	render: ->
 		map = reporter.nmap()
+		map = for m in map
+			if m then m else []	
+
 		array = []
-		for s in map
+		for devnull, s of map
 			for p in s
 				array = array.concat p
 		str = array.join '\n'
 		update str
+
+ex 'topSeparator',    => chalk.grey '┌──────────┐'
+ex 'bottomSeparator', => chalk.grey '└──────────┘'
+
+
+
 
 module.exports = (punk) -> { reporter }

@@ -1,6 +1,7 @@
 path     = require 'path'
 fs       = require 'fs'
 globby   = require 'globby'
+pn       = require 'pn/fs'
 
 module.exports = (punk, reporter) ->
 	plugin = {}
@@ -10,13 +11,16 @@ module.exports = (punk, reporter) ->
 
 				# PIPE #
 				(files, cond) ->
+					# get paths
 					paths = globby.sync settings, cwd: cond.workdir
 
+					# no files at input
 					if paths.length is 0
 						reporter.noFiles settings
 
+					# load files
 					for pth in paths
-						contents = fs.readFileSync pth
+						contents = await pn.readFile pth
 						files[pth] = contents
 
 					return files

@@ -10,7 +10,7 @@ punk.use(require('punker-convert-images'));
 punk.use(require('punker-uglify'));
 
 config = {
-  bundle: [
+  images: [
     {
       entry: 'img.svg',
       outFile: 'img.png'
@@ -18,17 +18,10 @@ config = {
   ],
   js: [
     {
-      entry: 'lib/dev.js'
-    },
-    p.minify(),
-    {
+      entry: 'lib/dev.js',
       outFile: 'dev.js'
     }
   ]
 };
 
-// images: [
-// 	entry: 'test/*.svg'
-// 	to: 'png'
-// ]
-punk.run(config);
+punk.watch(config);

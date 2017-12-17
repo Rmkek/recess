@@ -2,6 +2,7 @@ path = require 'path'
 fs   = require 'fs'
 del  = require 'del'
 mkdirp = require 'mkdirp'
+pn = require 'pn/fs'
 
 module.exports = (punk, reporter) ->
 	plugin = {}
@@ -11,7 +12,6 @@ module.exports = (punk, reporter) ->
 			# PIPE #
 			(files, cond) ->
 				keys = Object.keys(files)
-				# reporter.message keys
 
 				workdir = setting.workdir or cond.workdir or './'
 
@@ -21,14 +21,12 @@ module.exports = (punk, reporter) ->
 					to = punk.d.getExt out
 					rg = punk.d.getType keys[0], files[keys[0]]
 
-					# reporter.message to
-
 					if to isnt rg
 						files = await punk.p.to(to)(files, cond)
 
 					# if there is a single file, write its contents to path, which specified in setting.outFile
 
-					fs.writeFileSync out, files[Object.keys(files)[0]]
+					pn.writeFile out, files[Object.keys(files)[0]]
 
 				else if keys.length is 0
 				else if (setting.outDir or setting.outDirectory)
@@ -39,7 +37,7 @@ module.exports = (punk, reporter) ->
 						realPath = path.resolve(workdir, out, name)
 
 						mkdirp.sync path.dirname realPath
-						fs.writeFileSync realPath, contents
+						pn.writeFile realPath, contents
 				files
 
 		outFile: (setting) ->

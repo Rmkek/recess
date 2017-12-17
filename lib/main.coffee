@@ -25,6 +25,11 @@ punk =
 	converters: {}
 	minifiers:  {}
 
+	# TODO: proxy config changes for merge changes with defaults
+	config:
+		changedDelay: 60#ms
+
+
 
 
 # LOAD SEPARATED SCRIPTS
@@ -35,8 +40,8 @@ reporter = punk.reporter
 Object.assign punk, (require('./dev.js')      punk, reporter)
 Object.assign punk, (require('./run-task.js') punk, reporter)
 Object.assign punk, (require('./run.js')      punk, reporter)
-Object.assign punk, (require('./watch.js')    punk, reporter)
 Object.assign punk, (require('./use.js')      punk, reporter)
+Object.assign punk, (require('./file.js')     punk, reporter)
 
 punk.p = punk.plugins
 punk.d = punk.dev
