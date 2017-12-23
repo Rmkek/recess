@@ -2,16 +2,14 @@ punk = require './index.js'
 { p } = punk
 
 punk.use require 'punker-convert-images'
-punk.use require 'punker-uglify'
 
-config = 
+config =
 	images: [
 		entry: 'img.svg'
-		outFile: 'img.png'
+		p.to 'png'
+		p.rename 'main.png'
+		outDir: 'svgs'
 	]
-	js: [
-		entry: 'lib/dev.js'
-		outFile: 'dev.js'
-	]
+
 
 punk.watch config

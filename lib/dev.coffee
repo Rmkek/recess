@@ -27,11 +27,12 @@ module.exports = (punk, reporter) ->
 
 				md.end({ file })
 
-		# BUFFERIZE FILES #
-		bufferizeFiles: (files) ->
-			for name, file of files
-				files[name] = Buffer.from file
-			return files
+		prepareFiles: (files) ->
+			for index, file of files
+				unless file
+					files.splice index, 1
+				else
+					file.contents = Buffer.from file.contents
 
 		toPromise: (f) ->
 			if f instanceof Promise
@@ -49,12 +50,12 @@ module.exports = (punk, reporter) ->
 			ext[ext.length - 1]
 
 		# GET TYPE OF FILE #
-		getType: (name, file) ->
-			tp = type(file)
+		getType: (file) ->
+			tp = type(file.contents)
 			unless tp
-				tp = {ext: d.getExt name}
+				tp = {ext: d.getExt file.path}
 			ext = tp.ext
-			try ext = 'svg' if svg file
+			try ext = 'svg' if svg file.contents
 			ext
 
 		# keep process alive
@@ -95,20 +96,20 @@ module.exports = (punk, reporter) ->
 
 		eachAsync: (obj, func, cb = ->) ->
 			new Promise (resolve, reject) ->
-				tasks = 0
+				tasks    = 0
+				finished = 0
 				for name, value of obj
-					name = name - 0 if ir
 					do (name, value) ->
 						tasks++
 						setImmediate ->
 							r = func(value, name)
 							if r instanceof Promise
 								r.catch (err) -> reporter.error err
-							results[name] = await r
+							await r
 							finished++
 
 							if tasks is finished
-								resolve results
+								resolve()
 
 		toSetting: (inp) ->
 			# array to object
@@ -136,5 +137,17 @@ module.exports = (punk, reporter) ->
 				setting.workdir = path.resolve(punk.dirname)
 
 			setting
+
+		deasync: require 'deasync'
+		merge:   require 'lodash.merge'
+
+	d.deasync.await = (pr) ->
+		done   = false
+		result = undefined
+		pr.then (r) ->
+			done   = true
+			result = r
+		deasync.loopWhile => not done
+		return result
 
 	{ dev: d }

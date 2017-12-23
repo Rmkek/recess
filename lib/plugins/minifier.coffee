@@ -26,18 +26,13 @@ module.exports = (punk, reporter) ->
 					if punk.minifiers[ext]
 						pipe = punk.minifiers[ext]
 
-						f = {}
-						f[name] = file
-
 						# pipe file
-						files[name] = Buffer.from (await pipe(f, cond))[name]
+						files[name] = Buffer.from (await pipe([file], cond))[name]
 					else
 						# remove file
 						delete files[name]
 						reporter.noConverter name, ext
 
 				files
-
-	# plugin.pipes.to = plugin.pipes.ex = plugin.pipes.convert
 
 	plugin

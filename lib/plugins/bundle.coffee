@@ -22,9 +22,9 @@ module.exports = (punk, reporter) ->
 					finished = 0
 
 
-					bnd = (name, contents) ->
+					bnd = (file) ->
 						# new browserify bundle
-						bundle = browserify streamify(contents), basedir: path.dirname name # set cwd to file name
+						bundle = browserify streamify(file.contents), basedir: path.dirname file.path # set cwd to file name
 
 						# add babelify
 						bundle.transform babelify, { presets: [ "env", "vue-app" ] }
@@ -40,7 +40,7 @@ module.exports = (punk, reporter) ->
 								process.exit()
 
 							# write file
-							files[name] = b.toString()
+							files[files.indexOf file] = file
 
 							finished++
 
@@ -50,7 +50,7 @@ module.exports = (punk, reporter) ->
 								resolve files
 
 
-					await punk.d.mapAsync files, (contents, name) ->
-						await bnd name, contents
+					await punk.d.mapAsync files, (file) ->
+						await bnd file
 
 	plugin

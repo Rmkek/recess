@@ -1,5 +1,5 @@
-chokidar = require 'chokidar'
-pn       = require 'pn/fs'
+watch = require 'glob-watcher'
+pn    = require 'pn/fs'
 
 module.exports = (punk, reporter) ->
 	r = 
@@ -10,11 +10,12 @@ module.exports = (punk, reporter) ->
 			task = punk.d.toSetting task
 
 			# load files
-			files = await punk.p.add(task.entry)({}, task)
+			files = await punk.p.add(task.entry)([], task)
 
 			# pass files through pipes
 			for devnull, pipe of task.pipes
 				files = await pipe(files, task)
+				punk.d.prepareFiles files
 
 			# convert files
 			if task.to
@@ -28,24 +29,22 @@ module.exports = (punk, reporter) ->
 			await return
 
 		_watchTask: (taskName, task) ->
-			r._runTask taskName, task
+			# r._runTask taskName, task
 			# set settings to standard format
 			task = punk.d.toSetting task
 
 			# load files
 
-			chokidar.watch(task.entry).on 'change', (path) ->
-				setTimeout ->
-					changed punk.p.add(path)({}, task), path
-				, punk.config.changedDelay
-
-
-			changed = (files, filename) ->
-				files ?= await punk.p.add(task.entry)({}, task)
+			changed = (rg) ->
+				if rg
+					files = await punk.p.add([rg])([], task)
+				else
+					files = await punk.p.add(task.entry)([], task)
 
 				# pass files through pipes
 				for devnull, pipe of task.pipes
 					files = await pipe(files, task)
+					punk.d.prepareFiles files
 
 				# convert files
 				if task.to
@@ -54,7 +53,12 @@ module.exports = (punk, reporter) ->
 				# write files to FS
 				files = await punk.p.write(task)(files, task)
 
-				# report
-				reporter.changed filename if filename
+				reporter.changed rg if rg
+				await return
+
+			watcher = watch task.entry
+
+			watcher.on 'add',    (path) -> changed path
+			watcher.on 'change', (path) -> changed path
 
 			await return

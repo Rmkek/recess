@@ -3,7 +3,7 @@ module.exports = ->
 	plugin.pipes =
 		mute: (files)-> 
 			if files
-				{}
+				[]
 			else
-				-> {}
+				-> []
 	plugin

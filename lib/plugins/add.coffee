@@ -19,9 +19,10 @@ module.exports = (punk, reporter) ->
 						reporter.noFiles settings
 
 					# load files
-					for pth in paths
+					await punk.d.eachAsync paths, (pth) ->
 						contents = await pn.readFile pth
-						files[pth] = contents
+						files.push ( new punk.File pth, contents )
+						await return
 
 					return files
 

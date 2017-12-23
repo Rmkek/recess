@@ -18,15 +18,15 @@ module.exports = (punk, reporter) ->
 				# buffer concat list
 				joinList = []
 
-				for name, contents of files
-					joinList.push contents, separator
+				for file in files
+					joinList.push file.contents, separator
 				joinList.pop()
 
 				out = Buffer.concat joinList
 
 				# new file storage
-				r = {}
-				r[settings.output] = out
+				r = []
+				r.push new punk.File( settings.output, out )
 
 				return r
 

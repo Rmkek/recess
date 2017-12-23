@@ -67,19 +67,19 @@
        rx="10.961308"
        ry="41.199402"
        style="stroke-width:0.26458332" />
-<!--     <ellipse
+    <ellipse
        id="path88"
        cx="97.139877"
        cy="80.41964"
        rx="10.205358"
        ry="41.955357"
-       style="stroke-width:0.26458332" />  -->
-<!--     <ellipse
+       style="stroke-width:0.26458332" /> 
+    <ellipse
        id="path92"
        cx="95.25"
        cy="29.014879"
        rx="45.357143"
        ry="32.883926"
-       style="stroke-width:0.26458332" /> -->
+       style="stroke-width:0.26458332" />
   </g>
 </svg>

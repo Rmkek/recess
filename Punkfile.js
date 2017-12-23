@@ -7,19 +7,15 @@ punk = require('./index.js');
 
 punk.use(require('punker-convert-images'));
 
-punk.use(require('punker-uglify'));
-
 config = {
   images: [
     {
-      entry: 'img.svg',
-      outFile: 'img.png'
-    }
-  ],
-  js: [
+      entry: 'img.svg'
+    },
+    p.to('png'),
+    p.rename('main.png'),
     {
-      entry: 'lib/dev.js',
-      outFile: 'dev.js'
+      outDir: 'svgs'
     }
   ]
 };

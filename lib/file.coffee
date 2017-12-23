@@ -8,7 +8,12 @@ module.exports = (punk, reporter) ->
 					) ->
 
 			unless Buffer.isBuffer @contents
+				@contents = @contents or ''
 				@contents = Buffer.from @contents
 
-			@stat = new Mode mode: stat
+			stat = new Mode mode: stat
 
+			Object.defineProperty @, 'stat',
+				get: -> stat
+				set: (s) ->
+					stat = new Mode mode: stat
