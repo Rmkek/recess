@@ -1,18 +1,3 @@
-type     = require 'file-type'
-path     = require 'path'
-chalk    = require 'chalk'
-isSvg    = require 'is-svg'
-isBuffer = require 'is-buffer'
-
-bufferize = (files) ->
-	for name, file of files
-		unless isBuffer file
-			files[name] = Buffer.from file
-
-getExt = (name = '') ->
-	ext = path.extname(name).split '.'
-	ext[ext.length - 1]
-
 module.exports = (punk, reporter) ->
 	plugin = {}
 	plugin.pipes =
@@ -28,13 +13,14 @@ module.exports = (punk, reporter) ->
 						regexp = new RegExp (ext + '$'), 'i'
 						newName = file.path.replace regexp, settings
 						
+						# find converter
 						pipe = punk.converters[ext][settings]
 
-						r = await pipe([file], cond)
-						nc = Buffer.from(r[0].contents)
+						collection = new punk.Collection [file], cond
+						await collection.pipe pipe
 
 						# pipe file
-						return new punk.File file.path, nc
+						return collection.files[0]
 					else
 						# remove file
 						reporter.noConverter file.path, ext

@@ -1,15 +1,7 @@
-###################
-# CONNECT MODULES #
-###################
 
-process  = require 'process'
-path     = require 'path'
-fs       = require 'fs'
-util     = require 'util'
+path    = require 'path'
+process = require 'process'
 
-# ###################
-# DEFINE VARIABLES #
-####################
 
 cwd    = process.cwd()
 config = process.mainModule.filename
@@ -26,7 +18,7 @@ punk =
 
 	# TODO: proxy config changes for merge changes with defaults
 
-	_config:
+	config:
 		changedDelay: 60#ms
 
 # LOAD SEPARATED SCRIPTS
@@ -34,28 +26,18 @@ punk =
 Object.assign punk, (require('./reporter.js') punk)
 reporter = punk.reporter
 
-Object.assign punk, (require('./dev.js')      punk, reporter)
-Object.assign punk, (require('./run-task.js') punk, reporter)
-Object.assign punk, (require('./run.js')      punk, reporter)
-Object.assign punk, (require('./use.js')      punk, reporter)
-Object.assign punk, (require('./file.js')     punk, reporter)
+Object.assign punk,
+	(require('./dev.js')      punk, reporter),
+	(require('./run-task.js') punk, reporter),
+	(require('./run.js')      punk, reporter),
+	(require('./use.js')      punk, reporter),
+	(require('./file.js')     punk, reporter)
+
 
 punk.p = punk.plugins
 punk.d = punk.dev
 
 module.exports = punk
-
-Object.defineProperty punk, 'config',
-	get: -> 
-		new Proxy punk._config,
-			set: (obj, prop, value) ->
-				punk.d.merge obj[prop], value
-	set: (c) ->
-		punk.d.merge punk._config, c
-
-punk.config.a = b: c: 500
-
-reporter.message punk.config
 
 #####################
 # ADD BASIC PLUGINS #

@@ -1,5 +1,4 @@
 watch = require 'glob-watcher'
-pn    = require 'pn/fs'
 
 module.exports = (punk, reporter) ->
 	r = 
@@ -9,20 +8,27 @@ module.exports = (punk, reporter) ->
 			# set settings to standard format
 			task = punk.d.toSetting task
 
+			files = new punk.Collection undefined, task
+
 			# load files
-			files = await punk.p.add(task.entry)([], task)
+			await files.pipe punk.p.add(task.entry)
 
 			# pass files through pipes
 			for devnull, pipe of task.pipes
-				files = await pipe(files, task)
-				punk.d.prepareFiles files
+				await files.pipe pipe
 
 			# convert files
-			if task.to
-				files = await punk.p.to(task.to)(files, task)
+			if task.to and 
+			not (task.outFile or task.outDir or task.outDirectory)
+				await files.pipe punk.p.to(task.to)
+				task.outDir = './'
+				await files.pipe punk.p.write(task)
+				reporter.message 'ssdsdsds'
+			else if task.to
+				await files.pipe punk.p.to(task.to)
 
 			# write files to FS
-			files = await punk.p.write(task)(files, task)
+			await files.pipe punk.p.write(task)
 
 			# report
 			reporter.finishedTask taskName
@@ -36,29 +42,38 @@ module.exports = (punk, reporter) ->
 			# load files
 
 			changed = (rg) ->
+
+				files = new punk.Collection undefined, task
+
 				if rg
-					files = await punk.p.add([rg])([], task)
+					await files.pipe punk.p.add([rg])
 				else
-					files = await punk.p.add(task.entry)([], task)
+					await files.pipe punk.p.add(task.entry)
 
 				# pass files through pipes
 				for devnull, pipe of task.pipes
-					files = await pipe(files, task)
-					punk.d.prepareFiles files
+					await files.pipe pipe
 
 				# convert files
 				if task.to
-					files = await punk.p.to(task.to)(files, task)
+					await files.pipe punk.p.to(task.to)
 
 				# write files to FS
-				files = await punk.p.write(task)(files, task)
+				p = files.pipe(punk.p.write(task))
+				reporter.message p.pipe
+				# p.pipe punk.p.write(task)
 
 				reporter.changed rg if rg
 				await return
 
 			watcher = watch task.entry
 
-			watcher.on 'add',    (path) -> changed path
-			watcher.on 'change', (path) -> changed path
+			ch = (path) ->
+				setTimeout ->
+					changed path
+				, punk.config.changedDelay
+
+			watcher.on 'add',    ch
+			watcher.on 'change', ch
 
 			await return

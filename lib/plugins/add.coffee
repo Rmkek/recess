@@ -1,7 +1,6 @@
 path     = require 'path'
-fs       = require 'fs'
+fs       = require 'fs-extra'
 globby   = require 'globby'
-pn       = require 'pn/fs'
 
 module.exports = (punk, reporter) ->
 	plugin = {}
@@ -20,7 +19,7 @@ module.exports = (punk, reporter) ->
 
 					# load files
 					await punk.d.eachAsync paths, (pth) ->
-						contents = await pn.readFile pth
+						contents = await fs.readFile pth
 						files.push ( new punk.File pth, contents )
 						await return
 

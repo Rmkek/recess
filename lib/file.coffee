@@ -17,3 +17,27 @@ module.exports = (punk, reporter) ->
 				get: -> stat
 				set: (s) ->
 					stat = new Mode mode: stat
+
+	Collection: class
+		constructor: (@files = [], @settings = {}) ->
+
+		_pipe = (p) ->
+			r = await p @files, @settings
+			@files = r
+			await return @files
+
+		pipe: (pipe) ->
+			sf = @
+
+			p = new Promise (resolve, reject) ->
+				sf.files = (await pipe sf.files, sf.settings) or sf.files
+				resolve sf.files
+
+			p.pipe = -> 
+				args = arguments
+				p.then ->
+					sf.pipe args...
+
+			p
+
+

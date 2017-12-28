@@ -43,15 +43,15 @@ process.stdout.on 'resize', updateMap
 
 reporter = 
 	map:
-		space: []
-		start: []
-		usingConfig: []
-		topSeparator: []
-		sections: []
+		space:           []
+		start:           []
+		usingConfig:     []
+		topSeparator:    []
+		sections:        []
 		bottomSeparator: []
-		built: []
-		exited: []
-		error: []
+		built:           []
+		exited:          []
+		error:           []
 
 	nmap: ->
 		[

@@ -1,38 +1,27 @@
-type     = require 'file-type'
-path     = require 'path'
-chalk    = require 'chalk'
-isSvg    = require 'is-svg'
-isBuffer = require 'is-buffer'
-
-bufferize = (files) ->
-	for name, file of files
-		unless isBuffer file
-			files[name] = Buffer.from file
-
-getExt = (name = '') ->
-	ext = path.extname(name).split '.'
-	ext[ext.length - 1]
-
 module.exports = (punk, reporter) ->
 	plugin = {}
 	plugin.pipes =
-		minify: (settings) ->
+		minify: ->
 			(files, cond) ->
-				for name, file of files
-					# get type of file
-					ext = punk.d.getType(name, file)	
+				r = await punk.d.mapAsync files, (file) ->
+					ext = punk.d.getType file
 
 					# if there's needed converter
 					if punk.minifiers[ext]
+
+						# find converter
 						pipe = punk.minifiers[ext]
 
+						collection = new punk.Collection [file], cond
+						await collection.pipe pipe
+
 						# pipe file
-						files[name] = Buffer.from (await pipe([file], cond))[name]
+						return collection.files[0]
 					else
 						# remove file
-						delete files[name]
-						reporter.noConverter name, ext
+						reporter.noMin file.path, ext
+						return
+				r
 
-				files
 
 	plugin

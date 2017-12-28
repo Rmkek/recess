@@ -139,7 +139,6 @@ module.exports = (punk, reporter) ->
 			setting
 
 		deasync: require 'deasync'
-		merge:   require 'lodash.merge'
 
 	d.deasync.await = (pr) ->
 		done   = false

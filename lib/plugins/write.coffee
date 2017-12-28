@@ -1,8 +1,5 @@
 path = require 'path'
-fs   = require 'fs'
-del  = require 'del'
-mkdirp = require 'mkdirp'
-pn = require 'pn/fs'
+fs   = require 'fs-extra'
 
 module.exports = (punk, reporter) ->
 	plugin = {}
@@ -23,8 +20,8 @@ module.exports = (punk, reporter) ->
 
 					# if there is a single file, write its contents to path, which specified in setting.outFile
 
-					await del out
-					pn.writeFile out, files[0].contents
+					await fs.remove out
+					await fs.writeFile out, files[0].contents
 
 				else if files.length is 0
 				else if (setting.outDir or setting.outDirectory)
@@ -34,9 +31,9 @@ module.exports = (punk, reporter) ->
 						# absolute path
 						realPath = path.resolve(workdir, out, file.path)
 
-						await del realPath
-						mkdirp.sync path.dirname realPath
-						await pn.writeFile realPath, file.contents
+						await fs.remove realPath
+						await fs.mkdirp path.dirname realPath
+						await fs.writeFile realPath, file.contents
 						await return
 				files
 
