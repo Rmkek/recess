@@ -1,5 +1,6 @@
-module.exports = (punk, reporter) ->
-	_use: (plugin) ->
+module.exports = (punk) ->
+	reporter = punk.reporter
+	punk._use = (plugin) ->
 		plugin = plugin punk, reporter if typeof plugin is 'function'
 
 		if plugin.pipes
@@ -20,7 +21,7 @@ module.exports = (punk, reporter) ->
 			Object.assign punk.minifiers, plugin.minifiers
 
 
-	use: ->
+	punk.use = ->
 		if arguments.length > 1
 			plugins = arguments
 		else if Array.isArray arguments[0]

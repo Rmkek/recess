@@ -1,4 +1,5 @@
-module.exports = (punk, reporter) ->
+module.exports = (punk) ->
+	reporter = punk.reporter
 	plugin = {}
 	plugin.pipes =
 		concat: (settings, separator) ->

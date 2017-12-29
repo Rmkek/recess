@@ -1,5 +1,6 @@
-module.exports = (punk, reporter) ->
-	run: (settings) ->
+module.exports = (punk) ->
+	reporter = punk.reporter
+	punk.run = (settings) ->
 		reporter.start()
 		reporter.usingConfig punk.filename
 		punk.d.keepAlive()
@@ -12,7 +13,7 @@ module.exports = (punk, reporter) ->
 		catch e
 			reporter.error e
 
-	watch: (settings) ->
+	punk.watch = (settings) ->
 		reporter.startWatch()
 		reporter.usingConfig punk.filename
 		punk.d.keepAlive()

@@ -1,4 +1,5 @@
-module.exports = (punk, reporter) ->
+module.exports = (punk) ->
+	reporter = punk.reporter
 	plugin = {}
 	plugin.pipes =
 		convert: (settings) ->
@@ -19,8 +20,11 @@ module.exports = (punk, reporter) ->
 						collection = new punk.Collection [file], cond
 						await collection.pipe pipe
 
+						file = collection.files[0]
+						file.path = newName
+
 						# pipe file
-						return collection.files[0]
+						return file
 					else
 						# remove file
 						reporter.noConverter file.path, ext

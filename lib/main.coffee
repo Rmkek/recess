@@ -10,8 +10,6 @@ punk =
 	filename: config
 	dirname:  path.dirname config
 
-	reporter: reporter
-
 	plugins:    {}
 	converters: {}
 	minifiers:  {}
@@ -23,15 +21,13 @@ punk =
 
 # LOAD SEPARATED SCRIPTS
 
-Object.assign punk, (require('./reporter.js') punk)
-reporter = punk.reporter
-
-Object.assign punk,
-	(require('./dev.js')      punk, reporter),
-	(require('./run-task.js') punk, reporter),
-	(require('./run.js')      punk, reporter),
-	(require('./use.js')      punk, reporter),
-	(require('./file.js')     punk, reporter)
+require('./reporter.js') punk
+require('./dev.js')      punk
+require('./run-task.js') punk
+require('./run.js')      punk
+require('./use.js')      punk
+require('./file.js')     punk
+require('./inputs.js')   punk
 
 
 punk.p = punk.plugins
@@ -52,3 +48,5 @@ punk.use [
 	require './plugins/add.js'
 	require './plugins/write.js'
 ]
+
+

@@ -2,7 +2,8 @@ path     = require 'path'
 fs       = require 'fs-extra'
 globby   = require 'globby'
 
-module.exports = (punk, reporter) ->
+module.exports = (punk) ->
+	reporter = punk.reporter
 	plugin = {}
 	plugin.pipes =
 		add: (settings) ->

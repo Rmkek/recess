@@ -1,7 +1,8 @@
 path = require 'path'
 fs   = require 'fs-extra'
 
-module.exports = (punk, reporter) ->
+module.exports = (punk) ->
+	reporter = punk.reporter
 	plugin = {}
 	plugin.pipes =
 		write: (setting) ->

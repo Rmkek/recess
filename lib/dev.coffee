@@ -1,5 +1,3 @@
-mdeps = require 'module-deps'
-fs    = require 'fs'
 path  = require 'path'
 type  = require 'file-type'
 stp   = require 'stream-to-promise'
@@ -7,7 +5,8 @@ svg   = require 'is-svg'
 net   = require 'net'
 { setImmediate } = require 'timers'
 
-module.exports = (punk, reporter) ->
+module.exports = (punk) ->
+	reporter = punk.reporter
 	d =
 		# CHECK FILE EXISTANCE #
 		exists: (pth) ->
@@ -17,15 +16,15 @@ module.exports = (punk, reporter) ->
 			catch
 				return false
 
-		# GET DEPENDENCIES OF JS FILE #
-		deps: (file) ->
-			new Promise (resolve, reject) ->
-				md = mdeps()
+		# # GET DEPENDENCIES OF JS FILE #
+		# deps: (file) ->
+		# 	new Promise (resolve, reject) ->
+		# 		md = mdeps()
 
-				stp(md).then (file) ->
-					resolve file
+		# 		stp(md).then (file) ->
+		# 			resolve file
 
-				md.end({ file })
+		# 		md.end({ file })
 
 		prepareFiles: (files) ->
 			for index, file of files
@@ -149,4 +148,4 @@ module.exports = (punk, reporter) ->
 		deasync.loopWhile => not done
 		return result
 
-	{ dev: d }
+	punk.dev = d

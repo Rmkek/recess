@@ -1,7 +1,8 @@
 Mode = require 'stat-mode'
 
-module.exports = (punk, reporter) ->
-	File: class 
+module.exports = (punk) ->
+	reporter = punk.reporter
+	punk.File = class 
 		constructor: (  @path, 
 						@contents = new Buffer(''), 
 						stat      = 0o777
@@ -18,7 +19,10 @@ module.exports = (punk, reporter) ->
 				set: (s) ->
 					stat = new Mode mode: stat
 
-	Collection: class
+		toString: ->
+			"<File #{@path}: #{@contents}"
+
+	punk.Collection = class
 		constructor: (@files = [], @settings = {}) ->
 
 		_pipe = (p) ->

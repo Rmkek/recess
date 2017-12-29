@@ -217,4 +217,4 @@ ex 'bottomSeparator', => chalk.grey '└──────────┘'
 
 
 
-module.exports = (punk) -> { reporter }
+module.exports = (punk) -> punk.reporter = reporter

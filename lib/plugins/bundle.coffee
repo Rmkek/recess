@@ -11,7 +11,8 @@ streamify = (b) ->
 	s.push null
 	s
 
-module.exports = (punk, reporter) ->
+module.exports = (punk) ->
+	reporter = punk.reporter
 	plugin = {}
 	plugin.pipes =
 		bundle: (settings) ->
