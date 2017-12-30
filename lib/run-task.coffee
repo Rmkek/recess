@@ -8,13 +8,16 @@ module.exports = (punk) ->
 			await files.pipe pipe
 
 		# convert files
-		if task.to and 
-		not (task.outFile or task.outDir or task.outDirectory)
+		if task.to and not (task.outFile or task.outDir or task.outDirectory)
 			await files.pipe punk.p.to(task.to)
 			task.outDir = './'
 			await files.pipe punk.p.write(task)
 		else if task.to
 			await files.pipe punk.p.to(task.to)
+
+		if task.min
+			await files.pipe punk.p.min()
+
 
 		# write files to FS
 		await files.pipe punk.p.write(task)

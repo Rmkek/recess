@@ -15,6 +15,7 @@
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
     "file-type": "^7.4.0",
+    "find-up": "^2.1.0",
     "fs-extra": "^5.0.0",
     "glob-watcher": "^4.0.0",
     "globby": "^7.1.1",

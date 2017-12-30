@@ -75,7 +75,7 @@ module.exports = (punk) ->
 				else
 					results = {}
 
-				if obj.length is 0
+				if (obj.length is 0) or (Object.keys(obj).length is 0)
 					resolve results
 
 
@@ -96,6 +96,10 @@ module.exports = (punk) ->
 			new Promise (resolve, reject) ->
 				tasks    = 0
 				finished = 0
+
+				if (obj.length is 0) or (Object.keys(obj).length is 0)
+					resolve()
+
 				for name, value of obj
 					do (name, value) ->
 						tasks++

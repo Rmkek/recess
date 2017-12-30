@@ -2,6 +2,7 @@ do ->
 	path    = require 'path'
 	fs      = require 'fs-extra'
 	program = require 'commander'
+	up      = require 'find-up'
 
 	pjPath   = path.resolve(__dirname, '../../package.json')
 	pjText   = (await fs.readFile pjPath).toString()
@@ -9,13 +10,16 @@ do ->
 
 	program
 		.version pj.version
-		.usage '<task ...>'
+		.usage '[options] <task ...>'
+		.option '-w, --watch', 'Look after files'
 		.parse process.argv
+
+	console.log program.watch, program.args
 
 	run  = require './run.js'
 	init = require '../../index.js'
 
-	pth = path.resolve(__dirname, './evl.js')
+	pth  = await up ['Punkfile.js', 'punkfile.js', 'Punkfile', 'punkfile']
 
 	punk = init pth
 
@@ -25,8 +29,26 @@ do ->
 		task:  -> punk.task  arguments...
 		tasks: -> punk.tasks arguments...
 		run:   -> punk.run   arguments...
+		watch: -> punk.watch arguments...
+		plugins: punk.plugins
+		p:       punk.p
+		to:      punk.p.to
+		min: { min: true }
 
 
 	code = await fs.readFile(pth)
 
 	run code, dsl
+
+	ts = program.args
+
+	if (ts.length is 0) and (not program.watch) and punk._tasks.default?
+		ts = ['default']
+
+	if (ts.length is 0) and (program.watch) and punk._tasks.watch?
+		ts = ['watch']
+
+	unless program.watch
+		dsl.run   ts
+	else
+		dsl.watch ts

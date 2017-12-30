@@ -27,20 +27,25 @@ module.exports = (punk) ->
 
 		try
 
-			await punk.d.mapAsync toRun, (setting, name) ->
+			await punk.d.eachAsync toRun, (setting, name) ->
 				await punk._runTask name, setting
 
 			reporter.end()
 		catch e
 			reporter.error e
 
-	punk.watch = (settings) ->
+	punk.watch = (ts) ->
 		reporter.startWatch()
 		reporter.usingConfig punk.filename
 		punk.d.keepAlive()
+
+		ts = [ts] unless Array.isArray ts
+
+		toRun = getToRun ts
+
 		try
 
-			await punk.d.mapAsync settings, (setting, name) ->
+			await punk.d.eachAsync toRun, (setting, name) ->
 				await punk._watchTask name, setting
 
 		catch e

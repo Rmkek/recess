@@ -8,10 +8,10 @@ module.exports = (punk) ->
 					ext = punk.d.getType file
 
 					# if there's needed converter
-					if punk.converters[ext] and punk.converters[ext][settings]
+					if punk.minifiers[ext]
 
 						# find converter
-						pipe = punk.converters[ext]
+						pipe = punk.minifiers[ext]
 
 						collection = new punk.Collection [file], cond
 						await collection.pipe pipe
