@@ -1,4 +1,4 @@
-{ watch } = require 'chokidar'
+gaze   = require 'gaze'
 fs     = require 'fs-extra'
 
 module.exports = (punk) ->
@@ -65,24 +65,9 @@ module.exports = (punk) ->
 			await return
 
 
-		notRunning = ->
-			setTimeout ->
-				running = false
-			, punk.config.changedDelay + 10
-
-		sleep = (time) ->
-			new Promise (r, j) ->
-				setTimeout ->
-					r()
-				, time
-
-		ch = (event, path) ->
-			unless running
-				running = true
+		gaze task.entry, (err) ->
+			throw err if err
+			@on 'all', (event, path) -> 
 				await changed path
-				notRunning()
-
-		watcher = watch task.entry
-		watcher.on 'all',    ch
 
 		await return

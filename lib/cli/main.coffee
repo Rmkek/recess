@@ -14,8 +14,6 @@ do ->
 		.option '-w, --watch', 'Look after files'
 		.parse process.argv
 
-	console.log program.watch, program.args
-
 	run  = require './run.js'
 	init = require '../../index.js'
 
