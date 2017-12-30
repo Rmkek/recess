@@ -1,4 +1,5 @@
-watch = require 'glob-watcher'
+{ watch } = require 'chokidar'
+fs     = require 'fs-extra'
 
 module.exports = (punk) ->
 	reporter = punk.reporter
@@ -45,6 +46,8 @@ module.exports = (punk) ->
 		# set settings to standard format
 		task = punk.d.toSetting task
 
+		running = false
+
 		# load files
 
 		changed = (rg) ->
@@ -61,14 +64,25 @@ module.exports = (punk) ->
 			reporter.changed rg if rg
 			await return
 
-		watcher = watch task.entry
 
-		ch = (path) ->
+		notRunning = ->
 			setTimeout ->
-				changed path
-			, punk.config.changedDelay
+				running = false
+			, punk.config.changedDelay + 10
 
-		watcher.on 'add',    ch
-		watcher.on 'change', ch
+		sleep = (time) ->
+			new Promise (r, j) ->
+				setTimeout ->
+					r()
+				, time
+
+		ch = (event, path) ->
+			unless running
+				running = true
+				await changed path
+				notRunning()
+
+		watcher = watch task.entry
+		watcher.on 'all',    ch
 
 		await return

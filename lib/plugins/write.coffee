@@ -12,6 +12,11 @@ module.exports = (punk) ->
 				workdir = setting.workdir or cond.workdir or './'
 
 				if (files.length is 1) and (setting.outFile?)
+
+					if (setting.outFile is punk.s.entry) and not (Array.isArray setting.entry)
+						setting.outFile = setting.entry
+
+
 					out = path.resolve   workdir, setting.outFile
 					to  = punk.d.getExt  out
 					rg  = punk.d.getType files[0]

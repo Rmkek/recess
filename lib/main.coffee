@@ -18,6 +18,9 @@ module.exports = (config) ->
 		config:
 			changedDelay: 60#ms
 
+		s:
+			entry: Symbol 'Output to entry.'
+
 	# LOAD SEPARATED SCRIPTS
 
 
@@ -44,6 +47,7 @@ module.exports = (config) ->
 		require './plugins/converter.js'
 		require './plugins/minifier.js'
 		require './plugins/concat.js'
+		require './plugins/wrap-file.js'
 		require './plugins/add.js'
 		require './plugins/write.js'
 	]

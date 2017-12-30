@@ -30,10 +30,15 @@ do ->
 		tasks: -> punk.tasks arguments...
 		run:   -> punk.run   arguments...
 		watch: -> punk.watch arguments...
+
 		plugins: punk.plugins
 		p:       punk.p
 		to:      punk.p.to
-		min: { min: true }
+
+		min:    { min: true }
+		minify: { min: true }
+
+		entry:   punk.s.entry
 
 
 	code = await fs.readFile(pth)
@@ -43,6 +48,9 @@ do ->
 	ts = program.args
 
 	if (ts.length is 0) and (not program.watch) and punk._tasks.default?
+		ts = ['default']
+
+	if (ts.length is 0) and (program.watch) and punk._tasks.default?
 		ts = ['default']
 
 	if (ts.length is 0) and (program.watch) and punk._tasks.watch?

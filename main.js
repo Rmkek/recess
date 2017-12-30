@@ -1,1 +1,0 @@
-var config,p,punk;punk=require("./index.js"),({p:p}=punk),punk.use(require("punker-uglify"),require("punker-convert-images")),config={images:[{entry:"Punkfile.js"},p.minify(),p.minify(),p.minify(),{outFile:"main.js"}]},punk.run(config);

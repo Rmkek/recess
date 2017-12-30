@@ -146,5 +146,11 @@ module.exports = (punk) ->
 
 			svg.test(s.toString().replace(comments, ''))
 
+		sleep: (time) ->
+			new Promise (r, j) ->
+				setTimeout ->
+					r()
+				, time
+
 
 	punk.dev = d
