@@ -12,9 +12,9 @@ module.exports = (punk) ->
 				workdir = setting.workdir or cond.workdir or './'
 
 				if (files.length is 1) and (setting.outFile?)
-					out = path.resolve  workdir, setting.outFile
-					to = punk.d.getExt  out
-					rg = punk.d.getType files[0]
+					out = path.resolve   workdir, setting.outFile
+					to  = punk.d.getExt  out
+					rg  = punk.d.getType files[0]
 
 					if to isnt rg
 						files = await punk.p.to(to)(files, cond)

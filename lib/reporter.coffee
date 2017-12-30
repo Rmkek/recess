@@ -165,26 +165,29 @@ reporter =
 
 	# BASIC MESSAGES #
 
+	task: (task) -> chalk.blue '#' + task
+	file: (file) -> chalk.blue file
+
 	startingTask: (name) ->
-		reporter.message 'Starting task ' + chalk.blue('#' + name) + '!'
+		reporter.message 'Starting task ' + reporter.task(name) + '!'
 
 	finishedTask: (name) ->
-		reporter.message 'Finished task ' + chalk.blue('#' + name) + '!'
+		reporter.message 'Finished task ' + reporter.task(name) + '!'
 
 	changed: (name) ->
-		reporter.message 'Updated file ' + chalk.blue(name) + '!'
+		reporter.message 'Updated file ' + reporter.file(name) + '!'
 
 	finishedAll: ->
 		reporter.message 'Finished all tasks!'
 
 	noType: (filename) ->	
-		reporter.warn 'Cannot identify type of file ' + chalk.blue(filename) + '!'
+		reporter.warn 'Cannot identify type of file ' + reporter.file(filename) + '!'
 
 	noMin: (filename) ->	
-		reporter.warn 'Cannot minify file ' + chalk.blue(filename) + '!'
+		reporter.warn 'Cannot minify file ' + reporter.file(filename) + '!'
 
 	noFiles: (glob) ->
-		reporter.warn 'Not found any files at entry ' + chalk.blue(glob) + '!'
+		reporter.warn 'Not found any files at entry ' + reporter.file(glob) + '!'
 
 	noConverter: (from, to) ->
 		reporter.warn 'Not found converter for convert file ' + chalk.blue(from) + ' to ' + chalk.blue(to) + ' format!' 
@@ -193,6 +196,14 @@ reporter =
 		pl = chalk.blue(pluginName)
 		reporter.warn 'Plugin "' + pl + '" conflicts with existing plugin "' + pl + '"! Falling back to first plugin.'
 
+	pluginNotFound: (plugin) ->
+		if plugin
+			reporter.error new Error 'Not found plugin ' + plugin + '!'
+		else
+			reporter.error new Error 'Not found plugin!'
+
+	taskNotDefined: (task) ->
+		reporter.error new Error "Task #{reporter.task task} is not defined!"
 
 
 	write: (text) ->

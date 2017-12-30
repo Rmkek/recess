@@ -27,7 +27,7 @@ module.exports = (punk) ->
 						return file
 					else
 						# remove file
-						reporter.noConverter file.path, ext
+						reporter.noConverter file.path, settings
 						return
 				r
 

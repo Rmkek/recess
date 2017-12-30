@@ -1,7 +1,18 @@
 module.exports = (punk) ->
 	reporter = punk.reporter
 	punk._use = (plugin) ->
+		return if plugin is undefined
+		reporter.pluginNotFound() unless plugin
+
+		# get plugin from string
+		if typeof plugin in ['string', 'number']
+			try pth = require.resolve plugin
+			reporter.pluginNotFound(plugin) unless pth?
+			plugin = require pth
+
 		plugin = plugin punk, reporter if typeof plugin is 'function'
+
+		# merge
 
 		if plugin.pipes
 			for name, value of plugin.pipes

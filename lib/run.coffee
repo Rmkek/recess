@@ -1,12 +1,33 @@
 module.exports = (punk) ->
 	reporter = punk.reporter
-	punk.run = (settings) ->
+
+	punk._tasks = tasks = {}
+
+	getToRun = (ts) ->
+		ret = {}
+		for name in ts
+			if tasks[name]
+				ret[name] = tasks[name]
+			else
+				reporter.taskNotDefined name 
+		ret
+
+
+	punk.task = punk.tasks = (task) ->
+		Object.assign tasks, task
+
+	punk.run = (ts) ->
 		reporter.start()
 		reporter.usingConfig punk.filename
 		punk.d.keepAlive()
+
+		ts = [ts] unless Array.isArray ts
+
+		toRun = getToRun ts
+
 		try
 
-			await punk.d.mapAsync settings, (setting, name) ->
+			await punk.d.mapAsync toRun, (setting, name) ->
 				await punk._runTask name, setting
 
 			reporter.end()

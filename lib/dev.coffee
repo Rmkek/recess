@@ -1,7 +1,6 @@
 path  = require 'path'
 type  = require 'file-type'
 stp   = require 'stream-to-promise'
-svg   = require 'is-svg'
 net   = require 'net'
 { setImmediate } = require 'timers'
 
@@ -54,7 +53,7 @@ module.exports = (punk) ->
 			unless tp
 				tp = {ext: d.getExt file.path}
 			ext = tp.ext
-			try ext = 'svg' if svg file.contents
+			try ext = 'svg' if d.isSvg file.contents
 			ext
 
 		# keep process alive
@@ -137,15 +136,11 @@ module.exports = (punk) ->
 
 			setting
 
-		deasync: require 'deasync'
+		isSvg: (s) ->
+			comments = /<!--([\s\S]*?)-->/gi
+			svg = /^\s*(?:<\?xml[^>]*>\s*)?(?:<!doctype svg[^>]*\s*(?:<![^>]*>)*[^>]*>\s*)?<svg[^>]*>[^]*<\/svg>\s*$/i
 
-	d.deasync.await = (pr) ->
-		done   = false
-		result = undefined
-		pr.then (r) ->
-			done   = true
-			result = r
-		deasync.loopWhile => not done
-		return result
+			svg.test(s.toString().replace(comments, ''))
+
 
 	punk.dev = d

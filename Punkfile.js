@@ -5,7 +5,7 @@ punk = require('./index.js');
 
 ({p} = punk);
 
-punk.use(require('punker-uglify'), require('punker-convert-images'));
+punk.use('punker-uglify', 'punker-convert-images');
 
 config = {
   images: [
