@@ -1,8 +1,11 @@
 use 'punker-uglify', 'punker-convert-images'
+ignore defs
 
 tasks
 	default: [
-		entry: 'lib/cli/main.js'
-		p.header '#!/usr/bin/env node\n'
-		outFile: entry
+		trig: 'images'
+	]
+	images: [
+		entry: 'img.svg'
+		outFile: 'bi.svg'
 	]

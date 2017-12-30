@@ -18,23 +18,42 @@ module.exports = (config) ->
 		config:
 			changedDelay: 60#ms
 
-		s:
-			entry: Symbol 'Output to entry.'
+		symbols:
+			entry:   Symbol 'Output to entry.'
+			default: Symbol 'Some default value.'
+
+		ignored: []
+		ignore: (files) ->
+			if files is punk.s.default
+				punk.ignored = punk.ignored.concat [ 
+					'.git'
+					'.nyc_output'
+					'.sass-cache'
+					'bower_components'
+					'coverage'
+					'node_modules'
+				]
+			else
+				punk.ignored = punk.ignored.concat files
+
 
 	# LOAD SEPARATED SCRIPTS
 
 
+	punk.p = punk.plugins
+	punk.s = punk.symbols
+
 	require(path.resolve __dirname, './reporter.js') punk
+	punk.r = punk.reporter
+
 	require(path.resolve __dirname, './dev.js')      punk
+	punk.d = punk.dev
+
 	require(path.resolve __dirname, './run-task.js') punk
 	require(path.resolve __dirname, './run.js')      punk
 	require(path.resolve __dirname, './use.js')      punk
 	require(path.resolve __dirname, './file.js')     punk
 	require(path.resolve __dirname, './inputs.js')   punk
-
-
-	punk.p = punk.plugins
-	punk.d = punk.dev
 
 
 	#####################

@@ -1,6 +1,7 @@
 path     = require 'path'
 fs       = require 'fs-extra'
 globby   = require 'globby'
+ignore   = require 'ignore'
 
 module.exports = (punk) ->
 	reporter = punk.reporter
@@ -12,18 +13,22 @@ module.exports = (punk) ->
 				# PIPE #
 				(files, cond) ->
 					# get paths
-					paths = globby.sync settings, cwd: cond.workdir
+					unless settings.length is 0
+						ig = ignore().add punk.ignored
+						glb   = globby.sync settings, cwd: cond.workdir
+						paths = ig.filter glb
 
-					# no files at input
-					if paths.length is 0
-						reporter.noFiles settings
+						# no files at input
+						if (paths.length is 0) and (glb.length is paths.length)
+							reporter.noFiles settings
 
-					# load files
-					await punk.d.eachAsync paths, (pth) ->
-						contents = await fs.readFile(path.resolve cond.workdir, pth)
-						files.push ( new punk.File pth, contents )
-						await return
-
+						# load files
+						await punk.d.eachAsync paths, (pth) ->
+							contents = await fs.readFile(path.resolve cond.workdir, pth)
+							files.push ( new punk.File pth, contents )
+							await return
+					else
+						files = []
 					return files
 
 	plugin.pipes.load = plugin.pipes.add

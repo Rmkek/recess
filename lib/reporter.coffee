@@ -14,12 +14,8 @@ util = require 'util'
 jst = (text) ->
 	{ width } = size.get()
 	w = wrap text, { width: width - 15 - 1, indent: '' } 
-	n = w.split '\n'
-	regexp = new RegExp '(.{' + (width - 15 - 1) + '}[^\n])', 'g'
-	n2 = for str in n
-		str.replace(regexp, '$1\n')
-	n2.join '\n'
-
+	w
+	
 funcs = {}
 
 ex = (s, f) ->
@@ -139,8 +135,8 @@ reporter =
 			f = util.format err
 			arr = f.split '\n'
 			arr = arr.map (s) ->
-				'     ' + s
-			str = chalk.grey('└─ »') + ' ' + chalk.bold(jst arr.join('\n')[5..])
+				jst '     ' + s
+			str = chalk.grey('└─ »') + ' ' + chalk.bold(arr.join('\n')[5..])
 			str
 		reporter.map.bottomSeparator = [chalk.grey '├──────────┘']
 		reporter.end err

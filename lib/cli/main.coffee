@@ -23,11 +23,15 @@ do ->
 
 	# bridge
 	dsl =
-		use:   -> punk.use   arguments...
-		task:  -> punk.task  arguments...
-		tasks: -> punk.tasks arguments...
-		run:   -> punk.run   arguments...
-		watch: -> punk.watch arguments...
+		punk: punk
+
+		use:     -> punk.use    arguments...
+		task:    -> punk.task   arguments...
+		tasks:   -> punk.task   arguments...
+		run:     -> punk.run    arguments...
+		watch:   -> punk.watch  arguments...
+		ignore:  -> punk.ignore arguments...
+		ignores: -> punk.ignore arguments...
 
 		plugins: punk.plugins
 		p:       punk.p
@@ -36,25 +40,27 @@ do ->
 		min:    { min: true }
 		minify: { min: true }
 
-		entry:   punk.s.entry
+		entry:    punk.s.entry
+		def:      punk.s.default
+		defs:     punk.s.default
+		default:  punk.s.default
+		defaults: punk.s.default
 
 
 	code = await fs.readFile(pth)
 
-	run code, dsl
+	try
+		run code, dsl
+	catch e
+		punk.r.error e
 
 	ts = program.args
 
-	if (ts.length is 0) and (not program.watch) and punk._tasks.default?
-		ts = ['default']
-
-	if (ts.length is 0) and (program.watch) and punk._tasks.default?
-		ts = ['default']
-
-	if (ts.length is 0) and (program.watch) and punk._tasks.watch?
-		ts = ['watch']
+	ts = ['default'] if (ts.length is 0) and (not program.watch) and punk._tasks.default?
+	ts = ['default'] if (ts.length is 0) and (    program.watch) and punk._tasks.default?
+	ts = ['watch']   if (ts.length is 0) and (    program.watch) and punk._tasks.watch?
 
 	unless program.watch
-		dsl.run   ts
+		punk.startRun ts
 	else
-		dsl.watch ts
+		punk.startWatch ts

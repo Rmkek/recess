@@ -115,20 +115,36 @@ module.exports = (punk) ->
 
 		toSetting: (inp) ->
 			# array to object
+
+			seqs = []
+
 			if Array.isArray inp
 				r = { }
 				for item in inp
 					if typeof item is 'object'
 						Object.assign r, item
+
 					else if typeof item is 'function'
 						r.pipes ?= []
 						r.pipes.push item
+
+					else if (typeof item is 'function') and item[punk.s.isSequence]
+						seqs.push item
+
+					else if typeof item is 'string'
+						r.start ?= []
+						r.start.push item
 				setting = r
 			else
 				setting = inp
 
 			setting.pipes   ?= setting.pipe or setting.pipeline or []
 			setting.pipes    = [setting.pipes] unless Array.isArray setting.pipes
+
+			setting.start   ?= setting.start or setting.trigger or setting.trig or []
+			setting.start    = [setting.start] unless Array.isArray setting.start
+			setting.start.push seqs...
+
 
 			setting.entry   ?= setting.entries or setting.input or setting.inputs  or []
 			setting.workdir  = setting.workdir or setting.dir   or setting.dirname or './'

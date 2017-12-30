@@ -19,6 +19,7 @@ module.exports = (punk) ->
 		if task.min
 			await files.pipe punk.p.min()
 
+		await punk.run task.start if task.start and task.start.length > 0
 
 		# write files to FS
 		await files.pipe punk.p.write(task)
