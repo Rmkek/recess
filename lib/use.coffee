@@ -1,3 +1,5 @@
+resolve = require 'resolve'
+
 module.exports = (punk) ->
 	reporter = punk.reporter
 	punk._use = (plugin) ->
@@ -6,7 +8,9 @@ module.exports = (punk) ->
 
 		# get plugin from string
 		if typeof plugin in ['string', 'number']
-			try pth = require.resolve plugin
+
+			try pth = resolve.sync plugin, { basedir: punk.dirname }
+
 			reporter.pluginNotFound(plugin) unless pth?
 			plugin = require pth
 

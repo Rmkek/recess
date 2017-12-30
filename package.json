@@ -1,6 +1,6 @@
 {
   "name": "punker",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Simple and powerful build system",
   "main": "index.js",
   "author": "egorgl",
@@ -23,6 +23,7 @@
     "gaze": "^1.1.2",
     "globby": "^7.1.1",
     "log-update": "^2.3.0",
+    "resolve": "^1.5.0",
     "stat-mode": "^0.2.2",
     "stream-to-promise": "^2.2.0",
     "window-size": "^1.1.0",
