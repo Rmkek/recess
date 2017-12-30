@@ -1,3 +1,6 @@
+uuid = require 'uuid/v1'
+mm   = require 'micromatch'
+
 module.exports = (punk) ->
 	reporter = punk.reporter
 
@@ -6,10 +9,15 @@ module.exports = (punk) ->
 	getToRun = (ts) ->
 		ret = {}
 		for name in ts
-			if tasks[name]
-				ret[name] = tasks[name]
-			else
-				reporter.taskNotDefined name 
+			if typeof name is 'function'
+				ret[uuid()] = name
+				continue
+
+			else if typeof name is 'string'
+				keys = mm(Object.keys(tasks), [name])
+				ret[key] = tasks[key] for key in keys
+
+				reporter.tasksNotFound ts if keys.length is 0
 		ret
 
 
@@ -17,36 +25,26 @@ module.exports = (punk) ->
 		Object.assign tasks, task
 
 	punk.run = (ts) ->
-
-		funcs = []
-		ts.filter (f) ->
-			if typeof f is 'function'
-				reporter.message 'func'
-				funcs.push f
-				return false
-			else
-				return true
-
-		reporter.message funcs
-
 		ts = [ts] unless Array.isArray ts
-
 		toRun = getToRun ts
-
 		try
 			await punk.d.eachAsync toRun, (setting, name) ->
-				await punk._runTask name, setting
+				if typeof setting is 'function'
+					await setting()
+				else
+					await punk._runTask name, setting
 		catch e
 			reporter.error e
 
 	punk.watch = (ts) ->
 		ts = [ts] unless Array.isArray ts
-
 		toRun = getToRun ts
-
 		try
 			await punk.d.eachAsync toRun, (setting, name) ->
-				await punk._watchTask name, setting
+				if typeof setting is 'function'
+					await setting()
+				else
+					await punk._watchTask name, setting
 		catch e
 			reporter.error e
 
@@ -62,12 +60,17 @@ module.exports = (punk) ->
 		reporter.startWatch()
 		reporter.usingConfig punk.filename
 		punk.d.keepAlive()		
-		await punk.run arguments...
+		await punk.watch arguments...
 
-	punk.seq = punk.sequence = (tasks) ->
+	punk.seq = punk.sequence = ->
+		tsks = punk.d.flat arguments
 		r = () ->
-			for task in tasks
+			for task in tsks
 				await punk.run task
 		r[punk.s.isSequence] = true
 		r
 
+	punk.e = punk.event = (f) ->
+		r = -> f()
+		r[punk.s.isEvent] = true
+		r

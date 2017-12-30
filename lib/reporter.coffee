@@ -198,8 +198,8 @@ reporter =
 		else
 			reporter.error new Error 'Not found plugin!'
 
-	taskNotDefined: (task) ->
-		reporter.error new Error "Task #{reporter.task task} is not defined!"
+	tasksNotFound: (tasks) ->
+		reporter.warn "Task(s) #{reporter.task tasks} not found!"
 
 
 	write: (text) ->

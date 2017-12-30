@@ -69,6 +69,7 @@ module.exports = (punk) ->
 		gaze task.entry, (err) ->
 			throw err if err
 			@on 'all', (event, path) -> 
+				await punk.d.sleep punk.config.changedDelay
 				await changed path
 
 		await return

@@ -19,8 +19,10 @@ module.exports = (config) ->
 			changedDelay: 60#ms
 
 		symbols:
-			entry:   Symbol 'Output to entry.'
-			default: Symbol 'Some default value.'
+			entry:      Symbol 'Output to entry.'
+			default:    Symbol 'Some default value.'
+			isSequence: Symbol 'Some sequence of tasks.'
+			isEvent:    Symbol 'Event.' 
 
 		ignored: []
 		ignore: (files) ->

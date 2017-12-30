@@ -114,23 +114,30 @@ module.exports = (punk) ->
 								resolve()
 
 		toSetting: (inp) ->
-			# array to object
 
-			seqs = []
-
+			# array syntax to object
 			if Array.isArray inp
 				r = { }
 				for item in inp
 					if typeof item is 'object'
 						Object.assign r, item
 
-					else if typeof item is 'function'
+					# add event
+					else if (typeof item is 'function') and item[punk.s.isEvent]
+						r.start ?= []
+						r.start.push item
+
+					# add pipe
+					else if (typeof item is 'function') and not item[punk.s.isSequence]
 						r.pipes ?= []
 						r.pipes.push item
 
+					# add sequence
 					else if (typeof item is 'function') and item[punk.s.isSequence]
-						seqs.push item
+						r.start ?= []
+						r.start.push item
 
+					# add another task
 					else if typeof item is 'string'
 						r.start ?= []
 						r.start.push item
@@ -143,8 +150,6 @@ module.exports = (punk) ->
 
 			setting.start   ?= setting.start or setting.trigger or setting.trig or []
 			setting.start    = [setting.start] unless Array.isArray setting.start
-			setting.start.push seqs...
-
 
 			setting.entry   ?= setting.entries or setting.input or setting.inputs  or []
 			setting.workdir  = setting.workdir or setting.dir   or setting.dirname or './'
@@ -167,6 +172,18 @@ module.exports = (punk) ->
 				setTimeout ->
 					r()
 				, time
+
+		flat: (f) ->
+			flat = (arr, res) ->
+				i = 0
+				cur = undefined
+				len = arr.length
+				while i < len
+					cur = arr[i]
+					if Array.isArray(cur) then flat(cur, res) else res.push(cur)
+					i++
+				res
+			flat f, []
 
 
 	punk.dev = d
