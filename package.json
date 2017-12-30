@@ -1,6 +1,6 @@
 {
   "name": "punker",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Simple and powerful build system",
   "main": "index.js",
   "author": "egorgl",
