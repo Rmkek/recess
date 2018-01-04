@@ -1,3 +1,1 @@
-punk = require './lib/main.js'
-
-module.exports = punk
+module.exports = require './lib/main.js'

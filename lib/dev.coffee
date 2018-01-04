@@ -67,10 +67,9 @@ module.exports = (punk) ->
 		# use getType, it's better
 
 		# ASYNC MAP FOR PROMISES #
-		mapAsync: (obj, func, cb = ->) ->
+		mapAsync: (obj, func) ->
 			new Promise (resolve, reject) ->
-				ir = Array.isArray obj
-				if ir
+				if Array.isArray obj
 					results = []
 				else
 					results = {}
@@ -78,9 +77,7 @@ module.exports = (punk) ->
 				if (obj.length is 0) or (Object.keys(obj).length is 0)
 					resolve results
 
-
 				for name, value of obj
-					name = name - 0 if ir
 					do (name, value) ->
 						# async call
 						setImmediate ->
@@ -92,26 +89,8 @@ module.exports = (punk) ->
 							if Object.keys(obj).length is Object.keys(results).length
 								resolve results
 
-		eachAsync: (obj, func, cb = ->) ->
-			new Promise (resolve, reject) ->
-				tasks    = 0
-				finished = 0
-
-				if (obj.length is 0) or (Object.keys(obj).length is 0)
-					resolve()
-
-				for name, value of obj
-					do (name, value) ->
-						tasks++
-						setImmediate ->
-							r = func(value, name)
-							if r instanceof Promise
-								r.catch (err) -> reporter.error err
-							await r
-							finished++
-
-							if tasks is finished
-								resolve()
+		eachAsync: ->
+			@mapAsync arguments...
 
 		toSetting: (inp) ->
 
@@ -148,8 +127,15 @@ module.exports = (punk) ->
 			setting.pipes   ?= setting.pipe or setting.pipeline or []
 			setting.pipes    = [setting.pipes] unless Array.isArray setting.pipes
 
-			setting.start   ?= setting.start or setting.trigger or setting.trig or []
+			setting.start    = setting.start or setting.trigger or setting.trig or setting.then or []
 			setting.start    = [setting.start] unless Array.isArray setting.start
+
+			setting.needs = 
+				setting.needs     or setting.need   or 
+				setting.deps      or setting.dep    or setting.depend  or setting.depends or setting.dependOn or 
+				setting.dependsOn or setting.invoke or setting.invokes
+			setting.needs = [setting.start] unless Array.isArray setting.start
+
 
 			setting.entry   ?= setting.entries or setting.input or setting.inputs  or []
 			setting.workdir  = setting.workdir or setting.dir   or setting.dirname or './'

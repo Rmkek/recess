@@ -27,9 +27,8 @@ module.exports = (punk) ->
 							contents = await fs.readFile(path.resolve cond.workdir, pth)
 							files.push ( new punk.File pth, contents )
 							await return
-					else
-						files = []
-					return files
+
+					files
 
 	plugin.pipes.load = plugin.pipes.add
 

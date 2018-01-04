@@ -33,6 +33,8 @@ module.exports = (punk) ->
 
 		files = new punk.Collection undefined, task
 
+		await punk.run task.needs
+
 		# load files
 		await files.pipe punk.p.add(task.entry)
 
@@ -46,6 +48,8 @@ module.exports = (punk) ->
 		# r._runTask taskName, task
 		# set settings to standard format
 		task = punk.d.toSetting task
+
+		await punk.watch task.needs
 
 		running = false
 

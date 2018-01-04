@@ -25,6 +25,8 @@ module.exports = (punk) ->
 
 						# pipe file
 						return file
+					else if ext is settings
+						return file
 					else
 						# remove file
 						reporter.noConverter file.path, settings
