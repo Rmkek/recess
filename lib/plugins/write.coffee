@@ -13,9 +13,8 @@ module.exports = (punk) ->
 
 				if (files.length is 1) and (setting.outFile?)
 
-					if setting.outFile is punk.s.entry
+					if setting.outFile[0] is punk.s.entry
 						setting.outFile = setting.entry
-
 
 					await punk.d.eachAsync setting.outFile, (pth) ->
 						out = path.resolve   workdir, pth

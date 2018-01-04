@@ -1,10 +1,12 @@
 uses 'punker-uglify', 'punker-convert-images'
 ignore defs
 
+log entry is punk.s.entry
+
 tasks
 	default: [
 		entry: 'package-lock.json'
-		outFile: ['p2.json', 'p1.json']
+		entry
 	]
 
 ###

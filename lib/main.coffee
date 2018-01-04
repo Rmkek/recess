@@ -18,12 +18,6 @@ module.exports = (config) ->
 		config:
 			changedDelay: 60#ms
 
-		symbols:
-			entry:      Symbol 'Output to entry.'
-			default:    Symbol 'Some default value.'
-			isSequence: Symbol 'Some sequence of tasks.'
-			isEvent:    Symbol 'Event.' 
-
 		ignored: []
 		ignore: (files) ->
 			if files is punk.s.default
@@ -41,16 +35,11 @@ module.exports = (config) ->
 
 	# LOAD SEPARATED SCRIPTS
 
-
 	punk.p = punk.plugins
-	punk.s = punk.symbols
 
+	require(path.resolve __dirname, './symbols.js')  punk
 	require(path.resolve __dirname, './reporter.js') punk
-	punk.r = punk.reporter
-
 	require(path.resolve __dirname, './dev.js')      punk
-	punk.d = punk.dev
-
 	require(path.resolve __dirname, './run-task.js') punk
 	require(path.resolve __dirname, './run.js')      punk
 	require(path.resolve __dirname, './use.js')      punk

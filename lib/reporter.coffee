@@ -231,4 +231,5 @@ module.exports = (punk) ->
 	ex 'bottomSeparator', => chalk.grey '└──────────┘'
 
 	punk.reporter = reporter
+	punk.r        = reporter
 

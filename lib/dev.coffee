@@ -134,12 +134,12 @@ module.exports = (punk) ->
 				setting.needs     or setting.need   or 
 				setting.deps      or setting.dep    or setting.depend  or setting.depends or setting.dependOn or 
 				setting.dependsOn or setting.invoke or setting.invokes
+
 			setting.needs = [setting.start] unless Array.isArray setting.start
 
-			setting.outFile = setting.outFile or setting.outFiles
-			setting.outFile = [setting.outFile] unless Array.isArray setting.outFile
-
 			setting.entry   ?= setting.entries or setting.input or setting.inputs  or []
+			setting.entry    = [setting.entry] unless Array.isArray setting.entry
+
 			setting.workdir  = setting.workdir or setting.dir   or setting.dirname or './'
 
 			if setting.workdir
@@ -175,3 +175,4 @@ module.exports = (punk) ->
 
 
 	punk.dev = d
+	punk.d   = d
