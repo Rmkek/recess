@@ -13,21 +13,20 @@ module.exports = (punk) ->
 
 				if (files.length is 1) and (setting.outFile?)
 
-					if (setting.outFile is punk.s.entry) and not (Array.isArray setting.entry)
+					if setting.outFile is punk.s.entry
 						setting.outFile = setting.entry
 
 
-					out = path.resolve   workdir, setting.outFile
-					to  = punk.d.getExt  out
-					rg  = punk.d.getType files[0]
+					await punk.d.eachAsync setting.outFile, (pth) ->
+						out = path.resolve   workdir, pth
+						to  = punk.d.getExt  out
+						rg  = punk.d.getType files[0]
 
-					if to isnt rg
-						files = await punk.p.to(to)(files, cond)
+						if to isnt rg
+							files = await punk.p.to(to)(files, cond)
 
-					# if there is a single file, write its contents to path, which specified in setting.outFile
-
-					await fs.remove out
-					await fs.writeFile out, files[0].contents
+						await fs.remove out
+						await fs.writeFile out, files[0].contents
 
 				else if files.length is 0
 				else if (setting.outDir or setting.outDirectory)

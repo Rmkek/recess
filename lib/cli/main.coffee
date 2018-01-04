@@ -1,4 +1,4 @@
-do ->
+module.exports = (argv) ->
 	path    = require 'path'
 	fs      = require 'fs-extra'
 	program = require 'commander'
@@ -12,14 +12,17 @@ do ->
 		.version pj.version
 		.usage '[options] <task ...>'
 		.option '-w, --watch', 'Look after files'
-		.parse process.argv
+		.option '-p, --production', 'Production mode'
+		.parse argv
 
 	run  = require './run.js'
 	init = require '../../index.js'
 
-	pth  = await up ['Punkfile.js', 'punkfile.js', 'Punkfile', 'punkfile']
+	pth  = await up ['Punkfile.js', 'punkfile.js', 'Punkfile', 'punkfile'], cwd: __dirname
 
 	punk = init pth
+
+	punk.production = !!program.production
 
 	# bridge
 	dsl =
@@ -50,6 +53,11 @@ do ->
 		error:    punk.reporter.err
 		end:      punk.reporter.end
 		warn:     punk.reporter.warn
+
+
+		production: punk.production
+		prod:       punk.production
+		p:          punk.production
 
 
 		plugins: punk.plugins
@@ -84,7 +92,8 @@ do ->
 	ts = ['default'] if (ts.length is 0) and (    program.watch) and punk._tasks.default?
 	ts = ['watch']   if (ts.length is 0) and (    program.watch) and punk._tasks.watch?
 
-	unless program.watch
-		punk.startRun ts
-	else
+
+	if program.watch
 		punk.startWatch ts
+	else
+		punk.startRun ts

@@ -49,7 +49,7 @@ module.exports = (punk) ->
 		# set settings to standard format
 		task = punk.d.toSetting task
 
-		await punk.watch task.needs
+		punk.watch task.needs
 
 		running = false
 

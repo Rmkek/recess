@@ -6,13 +6,9 @@ ignore(defs);
 tasks({
   default: [
     {
-      needs: 'hello'
-    }
-  ],
-  hello: [
-    {
-      entry: 'bi.svg',
-      outFile: 'bi2.svg'
+      entry: 'package-lock.json',
+      outFile: ['p2.json',
+    'p1.json']
     }
   ]
 });

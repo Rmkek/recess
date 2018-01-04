@@ -34,8 +34,9 @@ module.exports = (punk) ->
 			sf = @
 
 			p = new Promise (resolve, reject) ->
-				sf.files = (await pipe sf.files, sf.settings)
-				sf.files = sf.files or []
+				if typeof pipe is 'function'
+					sf.files = (await pipe sf.files, sf.settings)
+					sf.files = sf.files or []
 				resolve sf.files
 
 			p.pipe = -> 
