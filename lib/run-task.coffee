@@ -31,7 +31,7 @@ module.exports = (punk) ->
 		# set settings to standard format
 		task = punk.d.toSetting task
 
-		files = new punk.Collection undefined, task
+		files = punk.collection undefined, task
 
 		await punk.run task.needs
 
@@ -77,3 +77,29 @@ module.exports = (punk) ->
 				await changed path
 
 		await return
+
+	punk.watch = (entry, task) ->
+		if typeof task is 'object'
+			return await punk._watchTask entry, task
+
+		punk.dev.keepAlive()
+		changed = (rg) ->
+			files = punk.collection undefined, task
+			if rg
+				await files.pipe punk.p.add([rg])
+			else
+				await files.pipe punk.p.add(entry)
+
+			await task.call files
+
+			reporter.changed rg if rg
+			await return
+
+
+		gaze entry, (err) ->
+			throw err if err
+			@on 'all', (event, path) -> 
+				await punk.d.sleep punk.config.changedDelay
+				await changed path
+
+		return

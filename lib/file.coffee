@@ -22,28 +22,66 @@ module.exports = (punk) ->
 		toString: ->
 			"<File #{@path}: #{@contents}"
 
-	punk.Collection = class
-		constructor: (@files = [], @settings = {}) ->
+	# punk.Collection = class
+	# 	constructor: (@files = [], @settings = {}) ->
+	# 		@settings.workdir ?= punk.dirname
 
-		_pipe = (p) ->
-			r = await p @files, @settings
-			@files = r
-			await return @files
+	# 	_pipe = (p) ->
+	# 		r = await p @files, @settings
+	# 		@files = r
+	# 		await return @files
 
-		pipe: (pipe) ->
-			sf = @
+	# 	pipe: (pipe) ->
+	# 		sf = @
 
+	# 		p = new Promise (resolve, reject) ->
+	# 			if typeof pipe is 'function'
+	# 				sf.files = (await pipe sf.files, sf.settings)
+	# 				sf.files = sf.files or []
+	# 			resolve sf.files
+
+	# 		p.pipe = -> 
+	# 			args = arguments
+	# 			p.then ->
+	# 				sf.pipe args...
+
+	# 		p
+
+	# 	th: (pipe) ->
+	# 		punk.d.await @pipe pipe
+
+	punk.collection = (files = [], settings = {}) ->
+		settings.workdir ?= punk.dirname
+
+		coll = (pipe) ->
+			punk.d.await coll.pipe pipe 
+
+		coll.files    = files
+		coll.settings = settings
+
+		coll.th = coll.through = coll
+
+		coll._pipe = (p) ->
+			r = await p coll.files, coll.settings
+			coll.files = r
+			await return coll.files
+
+		coll.pipe = (pipe) ->
 			p = new Promise (resolve, reject) ->
 				if typeof pipe is 'function'
-					sf.files = (await pipe sf.files, sf.settings)
-					sf.files = sf.files or []
-				resolve sf.files
+					coll.files = (await pipe coll.files, coll.settings)
+					coll.files = coll.files or []
+				resolve coll.files
 
 			p.pipe = -> 
 				args = arguments
 				p.then ->
-					sf.pipe args...
+					coll.pipe args...
 
 			p
+
+		coll
+
+
 
 

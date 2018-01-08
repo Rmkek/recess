@@ -30,31 +30,19 @@ module.exports = (punk) ->
 		try
 			await punk.d.eachAsync toRun, (setting, name) ->
 				if typeof setting is 'function'
-					await setting()
+					cont = punk.collection []
+					await (setting.call cont)
 				else
 					await punk._runTask name, setting
 		catch e
 			reporter.error e
-
-	punk.watch = (ts) ->
-		ts = [ts] unless Array.isArray ts
-		toRun = getToRun ts
-		try
-			await punk.d.eachAsync toRun, (setting, name) ->
-				if typeof setting is 'function'
-					await setting()
-				else
-					await punk._watchTask name, setting
-		catch e
-			reporter.error e
-
 
 	punk.startRun = () ->
 		reporter.start()
 		reporter.usingConfig punk.filename
 		punk.d.keepAlive()		
 		await punk.run arguments...
-		reporter.end()
+		reporter.end() unless punk.alive
 
 	punk.startWatch = () ->
 		reporter.startWatch()

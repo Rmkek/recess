@@ -12,7 +12,7 @@ module.exports = (punk) ->
 				reporter.error new Error 'Settings not defined!' 
 
 			# PIPE #
-			(files) ->
+			punk.i.buffer (files) ->
 
 				separator = Buffer.from settings.separator
 

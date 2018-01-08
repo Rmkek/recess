@@ -8,7 +8,7 @@ module.exports = (punk) ->
 		write: (setting) ->
 
 			# PIPE #
-			(files, cond) ->
+			punk.i.buffer (files, cond) ->
 				workdir = setting.workdir or cond.workdir or './'
 
 				if (files.length is 1) and (setting.outFile?)
@@ -42,10 +42,12 @@ module.exports = (punk) ->
 				files
 
 		outFile: (setting) ->
+			setting = [setting] unless Array.isArray setting
 			(files, cond) ->
 				await plugin.pipes.write(outFile: setting)(files, cond)
 
 		outDir: (setting) ->
+			setting = [setting] unless Array.isArray setting
 			(files, cond) ->
 				await plugin.pipes.write(outDir: setting)(files, cond)
 

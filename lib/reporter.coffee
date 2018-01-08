@@ -23,20 +23,15 @@ jst = (text) ->
 funcs = {}
 
 ex = (s, f) ->
-	reporter.map[s] = [] unless reporter.map[s]		
-	funcs[s] = [] unless funcs[s]		
 	r = f()
 	reporter.map[s].push r
-	funcs[s].push f
 
 updateMap = ->
 	reporter.map = {}
 	for name, value of funcs
 		reporter.map[name] = (f() for f in value)
+
 	reporter.render()
-
-process.stdout.on 'resize', updateMap
-
 
 module.exports = (punk) ->
 	reporter = 
@@ -226,6 +221,8 @@ module.exports = (punk) ->
 					array = array.concat p
 			str = array.join '\n'
 			update str
+
+	reporter.log = reporter.message
 
 	ex 'topSeparator',    => chalk.grey '┌──────────┐'
 	ex 'bottomSeparator', => chalk.grey '└──────────┘'

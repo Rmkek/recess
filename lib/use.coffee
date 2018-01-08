@@ -8,7 +8,6 @@ module.exports = (punk) ->
 
 		# get plugin from string
 		if typeof plugin in ['string', 'number']
-
 			try pth = resolve.sync plugin, { basedir: punk.dirname }
 
 			reporter.pluginNotFound(plugin) unless pth?
@@ -23,11 +22,7 @@ module.exports = (punk) ->
 				if punk.p[name]
 					reporter.pluginsConflict(name)
 				else
-					if Array.isArray value
-						value.textInput = true
-						punk.p[name] = value[0]
-					else
-						punk.p[name] = value
+					punk.p[name] = value
 
 		if plugin.converters
 			Object.assign punk.converters, plugin.converters

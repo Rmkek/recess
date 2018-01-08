@@ -1,8 +1,8 @@
 path  = require 'path'
 type  = require 'file-type'
-stp   = require 'stream-to-promise'
 net   = require 'net'
 { setImmediate } = require 'timers'
+deasync = require 'deasync'
 
 module.exports = (punk) ->
 	reporter = punk.reporter
@@ -58,7 +58,10 @@ module.exports = (punk) ->
 
 		# keep process alive
 		keepAlive: ->
-			net.createServer().listen()
+			unless punk.alive
+				net.createServer().listen()
+				
+			punk.alive = on
 
 		# difference between this functions is that getExt just returns extname, but getType returns true type of file
 		# e.g. you can rename pic.png to pic.jpg
@@ -140,6 +143,9 @@ module.exports = (punk) ->
 			setting.entry   ?= setting.entries or setting.input or setting.inputs  or []
 			setting.entry    = [setting.entry] unless Array.isArray setting.entry
 
+			setting.outFile ?= setting.outFiles or []
+			setting.outFile  = [setting.outFile] unless Array.isArray setting.outFile
+
 			setting.workdir  = setting.workdir or setting.dir   or setting.dirname or './'
 
 			if setting.workdir
@@ -172,6 +178,15 @@ module.exports = (punk) ->
 					i++
 				res
 			flat f, []
+
+		await: (p) ->
+			finished = false
+			r = undefined
+			p.then (rs) -> 
+				finished = true
+				r = rs
+			deasync.loopWhile -> not finished
+			r
 
 
 	punk.dev = d

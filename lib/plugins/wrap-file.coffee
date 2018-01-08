@@ -3,13 +3,13 @@ module.exports = (punk) ->
 	plugin = {}
 	plugin.pipes =
 		header: (settings) ->
-			(files, cond) ->
+			punk.i.buffer (files, cond) ->
 				b = Buffer.from settings
 				await punk.d.eachAsync files, (file) ->
 					file.contents = Buffer.concat [b, file.contents]
 				files
 		footer: (settings) ->
-			(files, cond) ->
+			punk.i.buffer (files, cond) ->
 				b = Buffer.from settings
 				await punk.d.eachAsync files, (file) ->
 					file.contents = Buffer.concat [file.contents, b]

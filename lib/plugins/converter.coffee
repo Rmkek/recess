@@ -3,7 +3,7 @@ module.exports = (punk) ->
 	plugin = {}
 	plugin.pipes =
 		convert: (settings) ->
-			(files, cond) ->
+			punk.i.buffer (files, cond) ->
 				r = await punk.d.mapAsync files, (file) ->
 					ext = punk.d.getType file
 
@@ -17,7 +17,7 @@ module.exports = (punk) ->
 						# find converter
 						pipe = punk.converters[ext][settings]
 
-						collection = new punk.Collection [file], cond
+						collection = punk.collection [file], cond
 						await collection.pipe pipe
 
 						file = collection.files[0]

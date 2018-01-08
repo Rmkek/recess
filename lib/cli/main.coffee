@@ -33,7 +33,11 @@ module.exports = (argv) ->
 		uses:    -> punk.use    arguments...
 		task:    -> punk.task   arguments...
 		tasks:   -> punk.task   arguments...
-		run:     -> punk.run    arguments...
+
+		spawn:   -> punk.run    arguments...
+		run:     ->
+			punk.d.await punk.run arguments...
+
 		watch:   -> punk.watch  arguments...
 		watches: -> punk.watch  arguments...
 		ignore:  -> punk.ignore arguments...
@@ -54,6 +58,20 @@ module.exports = (argv) ->
 		end:      punk.reporter.end
 		warn:     punk.reporter.warn
 
+		console:
+			message:  punk.reporter.message
+			log:      punk.reporter.message
+			info:     punk.reporter.message
+
+			warn:     punk.reporter.warn
+
+			err:      punk.reporter.err
+			error:    punk.reporter.err
+
+			info:     punk.reporter.dir
+
+			end:      punk.reporter.end
+
 
 		production: punk.production
 		prod:       punk.production
@@ -64,9 +82,10 @@ module.exports = (argv) ->
 		p:       punk.p
 		to:      punk.p.to
 
+		min:    punk.p.min()
+		minify: punk.p.min()
 
-		min:    { min: true }
-		minify: { min: true }
+		add: punk.p.add
 
 
 		entry:    punk.s.entry
@@ -79,7 +98,8 @@ module.exports = (argv) ->
 		default:  punk.s.default
 		defaults: punk.s.default
 
-	code = await fs.readFile(pth)
+	code = (await fs.readFile(pth)).toString()
+
 
 	try
 		run code, dsl

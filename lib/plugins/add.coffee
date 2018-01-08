@@ -7,11 +7,11 @@ module.exports = (punk) ->
 	reporter = punk.reporter
 	plugin = {}
 	plugin.pipes =
-		add: (settings) ->
+		add: (settings) =>
 				settings = [settings] unless Array.isArray settings
 
 				# PIPE #
-				(files, cond) ->
+				punk.i.any (files, cond) ->
 					# get paths
 					unless settings.length is 0
 						ig = ignore().add punk.ignored
