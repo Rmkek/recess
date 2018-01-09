@@ -18,9 +18,10 @@ module.exports = (argv) ->
 	run  = require './run.js'
 	init = require '../../index.js'
 
-	pth  = await up ['Punkfile.js', 'punkfile.js', 'Punkfile', 'punkfile'], cwd: __dirname
+	cwd = process.cwd()
+	pth  = await up ['Punkfile.js', 'punkfile.js', 'Punkfile', 'punkfile'], {cwd}
 
-	punk = init pth
+	punk = init pth, cwd
 
 	punk.production = !!program.production
 

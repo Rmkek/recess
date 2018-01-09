@@ -1,9 +1,6 @@
-module.exports = (config) ->
+module.exports = (config, cwd) ->
 	path    = require 'path'
 	process = require 'process'
-
-
-	cwd    = process.cwd()
 
 	punk =
 		filename: config
