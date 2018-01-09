@@ -1,12 +1,6 @@
-uses 'punker-uglify'
-
 tasks
 	js: [
-		needs: 'min'
-	]
-
-	min: [
-		entry: 'Punkfile.js'
-		min
-		outFile: '2.js'
+		entry: 'lib/plugins/if.js'
+		p.bundle()
+		outFile: 'main'
 	]

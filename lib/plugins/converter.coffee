@@ -3,6 +3,10 @@ module.exports = (punk) ->
 	plugin = {}
 	plugin.pipes =
 		convert: (settings) ->
+			if typeof settings not in ['number', 'string']
+				reporter.error 'Setting must be a number or string!'
+
+
 			punk.i.buffer (files, cond) ->
 				r = await punk.d.mapAsync files, (file) ->
 					ext = punk.d.getType file
@@ -10,18 +14,13 @@ module.exports = (punk) ->
 					# if there's needed converter
 					if punk.converters[ext] and punk.converters[ext][settings]
 
-						# get new name
-						regexp = new RegExp (ext + '$'), 'i'
-						newName = file.path.replace regexp, settings
-						
-						# find converter
 						pipe = punk.converters[ext][settings]
 
 						collection = punk.collection [file], cond
 						await collection.pipe pipe
 
 						file = collection.files[0]
-						file.path = newName
+						file.setExt settings
 
 						# pipe file
 						return file

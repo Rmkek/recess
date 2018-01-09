@@ -28,25 +28,24 @@ module.exports = (argv) ->
 	dsl =
 		punk: punk
 
+		use:     punk.use
+		uses:    punk.use
+		task:    punk.task
+		tasks:   punk.task
 
-		use:     -> punk.use    arguments...
-		uses:    -> punk.use    arguments...
-		task:    -> punk.task   arguments...
-		tasks:   -> punk.task   arguments...
-
-		spawn:   -> punk.run    arguments...
-		run:     ->
+		spawn:   punk.run
+		run: ->
 			punk.d.await punk.run arguments...
 
-		watch:   -> punk.watch  arguments...
-		watches: -> punk.watch  arguments...
-		ignore:  -> punk.ignore arguments...
-		ignores: -> punk.ignore arguments...
+		watch:   punk.watch
+		watches: punk.watch
+		ignore:  punk.ignore
+		ignores: punk.ignore
 
-		seq:      -> punk.seq arguments...
-		sequence: -> punk.seq arguments...
-		event:    -> punk.e   arguments...
-		e:        -> punk.e   arguments...
+		seq:      punk.seq
+		sequence: punk.seq
+		event:    punk.e
+		e:        punk.e
 
 
 		reporter: punk.reporter
@@ -78,12 +77,19 @@ module.exports = (argv) ->
 		p:          punk.production
 
 
+		outFile: punk.p.outFile
+		outDir:  punk.p.outDir
+
+
 		plugins: punk.plugins
 		p:       punk.p
 		to:      punk.p.to
 
 		min:    punk.p.min()
 		minify: punk.p.min()
+
+		cluster: punk.p.if()
+		pif: punk.p.if()
 
 		add: punk.p.add
 

@@ -60,6 +60,7 @@ module.exports = (config) ->
 		require './plugins/wrap-file.js'
 		require './plugins/add.js'
 		require './plugins/write.js'
+		require './plugins/if.js'
 	]
 
 	return punk

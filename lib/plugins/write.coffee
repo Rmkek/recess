@@ -28,17 +28,22 @@ module.exports = (punk) ->
 						await fs.writeFile out, files[0].contents
 
 				else if files.length is 0
+
 				else if (setting.outDir or setting.outDirectory)
 					out = (setting.outDir or setting.outDirectory)
 					# if there are multiple files, write they to directory, which specified in setting.outDir
-					await punk.d.eachAsync files, (file) ->
-						# absolute path
-						realPath = path.resolve(workdir, out, file.path)
+					await punk.d.eachAsync out, (dir) ->
 
-						await fs.remove realPath
-						await fs.mkdirp path.dirname realPath
-						await fs.writeFile realPath, file.contents
-						await return
+						await punk.d.eachAsync files, (file) ->
+							# absolute path
+							realPath = path.resolve(workdir, dir, file.path)
+
+							await fs.remove realPath
+
+							await fs.mkdirp path.dirname realPath
+
+							await fs.writeFile realPath, file.contents
+							await return
 				files
 
 		outFile: (setting) ->

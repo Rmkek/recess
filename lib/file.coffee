@@ -22,6 +22,14 @@ module.exports = (punk) ->
 		toString: ->
 			"<File #{@path}: #{@contents}"
 
+		setExt: (newExt) ->
+			reporter.error 'ext is undefined' unless newExt?
+
+			ext = punk.d.getType @
+			regexp = new RegExp (ext + '$'), 'i'
+			newName = @path.replace regexp, newExt
+			@path = newName
+
 	# punk.Collection = class
 	# 	constructor: (@files = [], @settings = {}) ->
 	# 		@settings.workdir ?= punk.dirname

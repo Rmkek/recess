@@ -53,7 +53,6 @@ module.exports = (punk) ->
 	punk.startRun = () ->
 		reporter.start()
 		reporter.usingConfig punk.filename
-		punk.d.keepAlive()		
 		await punk.run arguments...
 		reporter.end() unless punk.alive
 
