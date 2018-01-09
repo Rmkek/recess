@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env node
 var path;
 
 path = require('path');
