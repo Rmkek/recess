@@ -26,10 +26,11 @@ module.exports = (punk) ->
 						return file
 					else if ext is settings
 						return file
+					else if tr
 					else
 						# remove file
 						reporter.noConverter file.path, settings
-						return
+						return file
 				r
 
 	plugin.pipes.to = plugin.pipes.ex = plugin.pipes.convert

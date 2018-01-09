@@ -22,7 +22,7 @@ module.exports = (punk) ->
 						rg  = punk.d.getType files[0]
 
 						if to isnt rg
-							files = await punk.p.to(to)(files, cond)
+							files = await punk.p.to(to, false)(files, cond)
 
 						await fs.remove out
 						await fs.writeFile out, files[0].contents
