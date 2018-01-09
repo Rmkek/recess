@@ -45,11 +45,14 @@ module.exports = (punk) ->
 		await return
 
 	punk._watchTask = (taskName, task) ->
+		task ?= punk._tasks[taskName]
+		reporter.log taskName, task
+
 		# r._runTask taskName, task
 		# set settings to standard format
 		task = punk.d.toSetting task
 
-		punk.watch task.needs
+		punk.watchTasks task.needs
 
 		running = false
 
@@ -57,7 +60,7 @@ module.exports = (punk) ->
 
 		changed = (rg) ->
 
-			files = new punk.Collection undefined, task
+			files = punk.collection undefined, task
 
 			if rg
 				await files.pipe punk.p.add([rg])
@@ -79,8 +82,8 @@ module.exports = (punk) ->
 		await return
 
 	punk.watch = (entry, task) ->
-		if typeof task is 'object'
-			return await punk._watchTask entry, task
+		unless task?
+			return await punk._watchTask entry[0]
 
 		punk.dev.keepAlive()
 		changed = (rg) ->

@@ -37,6 +37,19 @@ module.exports = (punk) ->
 		catch e
 			reporter.error e
 
+	punk.watchTasks = (ts) ->
+		ts = [ts] unless Array.isArray ts
+		toRun = getToRun ts
+		try
+			await punk.d.eachAsync toRun, (setting, name) ->
+				if typeof setting is 'function'
+					cont = punk.collection []
+					await (setting.call cont)
+				else
+					await punk._watchTask name, setting
+		catch e
+			reporter.error e
+
 	punk.startRun = () ->
 		reporter.start()
 		reporter.usingConfig punk.filename

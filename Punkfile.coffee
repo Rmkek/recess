@@ -2,7 +2,11 @@ uses 'punker-uglify'
 
 tasks
 	js: [
-		entry: 'index.js'
+		needs: 'min'
+	]
+
+	min: [
+		entry: 'Punkfile.js'
 		min
-		entry
+		outFile: '2.js'
 	]
