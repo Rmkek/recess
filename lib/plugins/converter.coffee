@@ -2,7 +2,7 @@ module.exports = (punk) ->
 	reporter = punk.reporter
 	plugin = {}
 	plugin.pipes =
-		convert: (settings) ->
+		convert: (settings, tr) ->
 			if typeof settings not in ['number', 'string']
 				reporter.error 'Setting must be a number or string!'
 
