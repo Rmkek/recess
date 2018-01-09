@@ -1,13 +1,13 @@
 {
   "name": "punker",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Simple and powerful build system",
   "main": "index.js",
   "author": "egorgl",
   "license": "MIT",
   "private": false,
   "bin": {
-    "punker": "./lib/cli/main.js"
+    "punker": "./bin/punker.js"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
