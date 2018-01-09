@@ -1,6 +1,6 @@
 {
   "name": "punker",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Simple and powerful build system",
   "main": "index.js",
   "author": "egorgl",
@@ -32,9 +32,5 @@
     "uuid": "^3.1.0",
     "window-size": "^1.1.0",
     "word-wrap": "^1.2.3"
-  },
-  "devDependencies": {
-    "punker-convert-images": "^2.2.1",
-    "punker-uglify": "^2.2.2"
   }
 }
