@@ -2,11 +2,8 @@
 tasks({
   js: [
     {
-      entry: 'lib/plugins/if.js'
+      entry: 'lib/plugins/2.svg'
     },
-    p.bundle(),
-    {
-      outFile: 'main'
-    }
+    remove
   ]
 });
