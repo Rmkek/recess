@@ -60,6 +60,7 @@ module.exports = (config, cwd) ->
 		require './plugins/if.js'
 		require './plugins/stat.js'
 		require './plugins/path.js'
+		require './plugins/remove.js'
 	]
 
 	return punk

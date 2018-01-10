@@ -87,6 +87,12 @@ module.exports = (argv) ->
 		p:       punk.p
 		to:      punk.p.to
 
+		wrap:      punk.p.wrap
+		unwrap:    punk.p.unwrap
+
+		del:    punk.p.del
+		remove: punk.p.remove
+
 		min:    punk.p.min()
 		minify: punk.p.min()
 

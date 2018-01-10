@@ -13,14 +13,12 @@ module.exports = (punk) ->
 						file.path = path.join settings, file.path
 					files
 
-		unwrap: (settings = 1) =>
+		unwrap: (reg, str = "") =>
 				# PIPE #
 				punk.i.any (files, cond) ->
+					xp = new RegExp reg + '/?'
 					for file in files
-						file.path = file.path.split path.sep
-						for devnull in [0..settings]
-							file.path.shift()
-						file.path = file.path.join '/'
+						file.path = file.path.replace xp, str
 					files
 
 	plugin
