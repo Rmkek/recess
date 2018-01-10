@@ -58,6 +58,8 @@ module.exports = (config, cwd) ->
 		require './plugins/add.js'
 		require './plugins/write.js'
 		require './plugins/if.js'
+		require './plugins/stat.js'
+		require './plugins/path.js'
 	]
 
 	return punk

@@ -46,7 +46,11 @@ module.exports = (punk) ->
 
 	punk._watchTask = (taskName, task) ->
 		task ?= punk._tasks[taskName]
-		reporter.log taskName, task
+
+		if typeof task is 'function'
+			reporter.cantWatch taskName
+			await return
+
 
 		# r._runTask taskName, task
 		# set settings to standard format

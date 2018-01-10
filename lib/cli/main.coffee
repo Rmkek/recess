@@ -48,6 +48,7 @@ module.exports = (argv) ->
 		event:    punk.e
 		e:        punk.e
 
+		read: fs.readFileSync
 
 		reporter: punk.reporter
 		r:        punk.reporter
@@ -92,6 +93,7 @@ module.exports = (argv) ->
 		cluster: punk.p.if()
 		pif: punk.p.if()
 
+		stat: punk.p.stat
 		add: punk.p.add
 
 

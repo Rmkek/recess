@@ -146,6 +146,9 @@ module.exports = (punk) ->
 			setting.outFile ?= setting.outFiles or []
 			setting.outFile  = [setting.outFile] unless Array.isArray setting.outFile
 
+			setting.outDir  ?= setting.outDirs or []
+			setting.outDir   = [setting.outDir] unless Array.isArray setting.outDir
+
 			setting.workdir  = setting.workdir or setting.dir   or setting.dirname or './'
 
 			if setting.workdir

@@ -205,6 +205,9 @@ module.exports = (punk) ->
 		tasksNotFound: (tasks) ->
 			reporter.warn "Task(s) #{reporter.task tasks} not found!"
 
+		cantWatch: (task) ->
+			reporter.warn "Can\'t watch a functional task #{reporter.task task}!"
+
 
 		write: (text) ->
 			ex 'sections', text

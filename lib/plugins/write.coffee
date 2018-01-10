@@ -11,7 +11,7 @@ module.exports = (punk) ->
 			punk.i.buffer (files, cond) ->
 				workdir = setting.workdir or cond.workdir or './'
 
-				if (files.length is 1) and (setting.outFile?)
+				if files.length is 1 and setting.outFile?.length
 
 					if setting.outFile[0] is punk.s.entry
 						setting.outFile = setting.entry
@@ -25,12 +25,13 @@ module.exports = (punk) ->
 							files = await punk.p.to(to, false)(files, cond)
 
 						await fs.remove out
-						await fs.writeFile out, files[0].contents
+						await fs.writeFile out, files[0].contents, mode: files[0].stat.stat.mode
 
 				else if files.length is 0
 
-				else if (setting.outDir or setting.outDirectory)
+				else if setting.outDir?.length
 					out = (setting.outDir or setting.outDirectory)
+
 					# if there are multiple files, write they to directory, which specified in setting.outDir
 					await punk.d.eachAsync out, (dir) ->
 
@@ -42,7 +43,7 @@ module.exports = (punk) ->
 
 							await fs.mkdirp path.dirname realPath
 
-							await fs.writeFile realPath, file.contents
+							await fs.writeFile realPath, file.contents, mode: files[0].stat.stat.mode
 							await return
 				files
 

@@ -17,7 +17,14 @@ module.exports = (punk) ->
 			Object.defineProperty @, 'stat',
 				get: -> stat
 				set: (s) ->
-					stat = new Mode mode: stat
+					stat = new Mode mode: s
+				enumerable: true
+
+			Object.defineProperty @, 'mode',
+				get: -> stat
+				set: (s) ->
+					stat = new Mode mode: s
+				enumerable: true
 
 		toString: ->
 			"<File #{@path}: #{@contents}"
@@ -69,16 +76,12 @@ module.exports = (punk) ->
 
 		coll.th = coll.through = coll
 
-		coll._pipe = (p) ->
-			r = await p coll.files, coll.settings
-			coll.files = r
-			await return coll.files
-
 		coll.pipe = (pipe) ->
 			p = new Promise (resolve, reject) ->
 				if typeof pipe is 'function'
-					coll.files = (await pipe coll.files, coll.settings)
-					coll.files = coll.files or []
+					r = pipe coll.files, coll.settings
+					coll.files = await r or coll.files
+
 				resolve coll.files
 
 			p.pipe = -> 

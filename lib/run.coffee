@@ -30,8 +30,15 @@ module.exports = (punk) ->
 		try
 			await punk.d.eachAsync toRun, (setting, name) ->
 				if typeof setting is 'function'
+					reporter.startingTask name
 					cont = punk.collection []
-					await (setting.call cont)
+
+					try
+						await (setting.call cont)
+					catch e
+						reporter.error e
+					
+					reporter.finishedTask name
 				else
 					await punk._runTask name, setting
 		catch e
@@ -43,8 +50,7 @@ module.exports = (punk) ->
 		try
 			await punk.d.eachAsync toRun, (setting, name) ->
 				if typeof setting is 'function'
-					cont = punk.collection []
-					await (setting.call cont)
+					reporter.cantWatch name
 				else
 					await punk._watchTask name, setting
 		catch e
