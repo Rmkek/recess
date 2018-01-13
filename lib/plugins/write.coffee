@@ -29,8 +29,11 @@ module.exports = (recess) ->
 
 				else if files.length is 0
 
-				else if setting.outDir?.length
-					out = (setting.outDir or setting.outDirectory)
+				else if setting.outDir?.length or (not setting.outDir?.length and setting.to?)
+					if not setting.outDir?.length and setting.to?
+						out = [workdir]
+					else
+						out = setting.outDir
 
 					# if there are multiple files, write they to directory, which specified in setting.outDir
 					await recess.d.eachAsync out, (dir) ->
@@ -45,6 +48,9 @@ module.exports = (recess) ->
 
 							await fs.writeFile realPath, file.contents, mode: files[0].stat.stat.mode
 							await return
+
+
+
 				files
 
 		outFile: (setting) ->

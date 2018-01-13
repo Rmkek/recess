@@ -1,0 +1,74 @@
+Arguments: 
+  /usr/bin/node /usr/bin/yarn publish
+
+PATH: 
+  /home/egorcod/Документы/cocos2d-x/templates:/home/egorcod/Документы:/home/egorcod/Документы/cocos2d-x/tools/cocos2d-console/bin:/opt/android-sdk/tools:/opt/android-sdk/platform-tools:/opt/android-sdk:/home/egorcod/Документы/cocos2d-x/templates:/home/egorcod/Документы:/home/egorcod/Документы/cocos2d-x/tools/cocos2d-console/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/opt/android-sdk/emulator:/opt/android-sdk/platform-tools:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/var/lib/snapd/snap/bin:/opt/cocos2d-x:/opt/cocos2d-x/tools/cocos2d-console/bin:/opt/cocos2d-x/templates:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/egorcod/Android/Sdk/tools:/home/egorcod/.gem/ruby/2.4.0/bin
+
+Yarn version: 
+  1.3.2
+
+Node version: 
+  9.3.0
+
+Platform: 
+  linux x64
+
+npm manifest: 
+  {
+    "name": "recess",
+    "version": "4.3.2",
+    "description": "Simple and powerful build system",
+    "main": "index.js",
+    "author": "egorgl",
+    "license": "MIT",
+    "private": false,
+    "bin": {
+      "recess": "./bin/recess.js"
+    },
+    "dependencies": {
+      "babel-core": "^6.26.0",
+      "babel-preset-env": "^1.6.1",
+      "babel-preset-vue-app": "^2.0.0",
+      "babelify": "^8.0.0",
+      "browser-sync": "^2.23.5",
+      "browserify": "^14.5.0",
+      "chalk": "^2.3.0",
+      "commander": "^2.12.2",
+      "deasync": "^0.1.12",
+      "deep-assign": "^2.0.0",
+      "file-type": "^7.4.0",
+      "find-up": "^2.1.0",
+      "fs-extra": "^5.0.0",
+      "gaze": "^1.1.2",
+      "globby": "^7.1.1",
+      "ignore": "^3.3.7",
+      "log-update": "^2.3.0",
+      "micromatch": "^3.1.4",
+      "relative": "^3.0.2",
+      "resolve": "^1.5.0",
+      "stat-mode": "^0.2.2",
+      "stream-to-array": "^2.3.0",
+      "uuid": "^3.1.0",
+      "window-size": "^1.1.0",
+      "word-wrap": "^1.2.3"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: canceled
+      at Interface.<anonymous> (/usr/lib/node_modules/yarn/lib/cli.js:121045:13)
+      at Interface.emit (events.js:159:13)
+      at Interface._ttyWrite (readline.js:786:16)
+      at ReadStream.onkeypress (readline.js:165:10)
+      at ReadStream.emit (events.js:159:13)
+      at emitKeys (internal/readline.js:420:14)
+      at emitKeys.next (<anonymous>)
+      at ReadStream.onData (readline.js:1022:36)
+      at ReadStream.emit (events.js:159:13)
+      at addChunk (_stream_readable.js:265:12)
