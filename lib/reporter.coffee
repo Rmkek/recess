@@ -33,7 +33,7 @@ updateMap = ->
 
 	reporter.render()
 
-module.exports = (punk) ->
+module.exports = (recess) ->
 	reporter = 
 		map:
 			space:           []
@@ -61,7 +61,7 @@ module.exports = (punk) ->
 			# throw util.format r
 
 		production: ->
-			if punk.production
+			if recess.production
 				' production'
 			else
 				''
@@ -161,6 +161,7 @@ module.exports = (punk) ->
 					text   = jst chalk.bold.green 'Successfully built!'
 				suffix + timer + separator + text
 			reporter.render()
+			process.send 'BUILD FINISHED'
 			process.exit()
 
 		# BASIC MESSAGES #
@@ -230,6 +231,6 @@ module.exports = (punk) ->
 	ex 'topSeparator',    => chalk.grey '┌──────────┐'
 	ex 'bottomSeparator', => chalk.grey '└──────────┘'
 
-	punk.reporter = reporter
-	punk.r        = reporter
+	recess.reporter = reporter
+	recess.r        = reporter
 

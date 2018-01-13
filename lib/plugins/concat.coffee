@@ -1,5 +1,5 @@
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	plugin = {}
 	plugin.pipes =
 		concat: (settings, separator) ->
@@ -12,7 +12,7 @@ module.exports = (punk) ->
 				reporter.error new Error 'Settings not defined!' 
 
 			# PIPE #
-			punk.i.buffer (files) ->
+			recess.i.buffer (files) ->
 
 				separator = Buffer.from settings.separator
 
@@ -27,7 +27,7 @@ module.exports = (punk) ->
 
 				# new file storage
 				r = []
-				r.push new punk.File( settings.output, out )
+				r.push new recess.File( settings.output, out )
 
 				return r
 

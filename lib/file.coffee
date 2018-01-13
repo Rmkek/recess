@@ -1,8 +1,8 @@
 Mode = require 'stat-mode'
 
-module.exports = (punk) ->
-	reporter = punk.reporter
-	punk.File = class 
+module.exports = (recess) ->
+	reporter = recess.reporter
+	recess.File = class 
 		constructor: (  @path, 
 						@contents = new Buffer(''), 
 						stat      = 0o777
@@ -32,14 +32,14 @@ module.exports = (punk) ->
 		setExt: (newExt) ->
 			reporter.error 'ext is undefined' unless newExt?
 
-			ext = punk.d.getType @
+			ext = recess.d.getType @
 			regexp = new RegExp (ext + '$'), 'i'
 			newName = @path.replace regexp, newExt
 			@path = newName
 
-	# punk.Collection = class
+	# recess.Collection = class
 	# 	constructor: (@files = [], @settings = {}) ->
-	# 		@settings.workdir ?= punk.dirname
+	# 		@settings.workdir ?= recess.dirname
 
 	# 	_pipe = (p) ->
 	# 		r = await p @files, @settings
@@ -63,13 +63,13 @@ module.exports = (punk) ->
 	# 		p
 
 	# 	th: (pipe) ->
-	# 		punk.d.await @pipe pipe
+	# 		recess.d.await @pipe pipe
 
-	punk.collection = (files = [], settings = {}) ->
-		settings.workdir ?= punk.dirname
+	recess.collection = (files = [], settings = {}) ->
+		settings.workdir ?= recess.dirname
 
 		coll = (pipe) ->
-			punk.d.await coll.pipe pipe 
+			recess.d.await coll.pipe pipe 
 
 		coll.files    = files
 		coll.settings = settings
@@ -79,8 +79,19 @@ module.exports = (punk) ->
 		coll.pipe = (pipe) ->
 			p = new Promise (resolve, reject) ->
 				if typeof pipe is 'function'
-					r = pipe coll.files, coll.settings
-					coll.files = await r or coll.files
+					try
+
+						r = await pipe coll.files, coll.settings
+						
+						if typeof r isnt 'object'
+							reporter.error 'Result of pipe must be an array! Got ' + typeof pipe + '.'
+
+						coll.files = await r or coll.files
+
+					catch e
+						reporter.error e
+				else
+					reporter.error 'Pipe must be a function! Got ' + typeof pipe + '.'
 
 				resolve coll.files
 

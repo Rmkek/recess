@@ -1,19 +1,19 @@
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	plugin = {}
 	plugin.pipes =
 		minify: (settings) ->
-			punk.i.buffer (files, cond) ->
-				r = await punk.d.mapAsync files, (file) ->
-					ext = punk.d.getType file
+			recess.i.buffer (files, cond) ->
+				r = await recess.d.mapAsync files, (file) ->
+					ext = recess.d.getType file
 
 					# if there's needed converter
-					if punk.minifiers[ext]
+					if recess.minifiers[ext]
 
 						# find converter
-						pipe = punk.minifiers[ext]
+						pipe = recess.minifiers[ext]
 
-						collection = punk.collection [file], cond
+						collection = recess.collection [file], cond
 						await collection.pipe pipe
 
 						file = collection.files[0]

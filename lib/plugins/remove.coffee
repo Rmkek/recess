@@ -1,15 +1,17 @@
 path     = require 'path'
 fs       = require 'fs-extra'
 
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	plugin = {}
 	plugin.pipes =
-		del: =>
-			punk.i.any (files, cond) ->
-				for file in files
+		del: ->
+			recess.i.any (files, cond) ->
+				await recess.d.eachAsync files, (file) ->
 					pth = path.resolve cond.workdir, file.path
-					reporter.log pth
+					await fs.remove pth
+
+				files
 
 	plugin.pipes.remove = plugin.pipes.del
 

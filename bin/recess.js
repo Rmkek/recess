@@ -4,8 +4,8 @@ var path;
 path = require('path');
 
 (async function() {
-  var main, punk;
+  var main, recess;
   main = path.resolve(__dirname, '../lib/cli/main.js');
-  punk = require(main);
-  return (await punk(process.argv));
+  recess = require(main);
+  return (await recess(process.argv));
 })();

@@ -1,9 +1,9 @@
 sta = require 'stream-to-array'
 stream = require 'stream'
 
-module.exports = (punk) ->
+module.exports = (recess) ->
 
-	punk.i = punk.inputs = punk.input = {}
+	recess.i = recess.inputs = recess.input = {}
 
 	type = (obj) ->
 		if typeof obj is 'string'
@@ -13,11 +13,11 @@ module.exports = (punk) ->
 		else if (typeof obj is 'object') and obj.pipe?
 			'stream'
 		else
-			punk.reporter.error 'Unknown type of file contents!'
+			recess.reporter.error 'Unknown type of file contents!'
 
-	punk.i.buffer = (f) ->
+	recess.i.buffer = (f) ->
 		(files) ->
-			await punk.d.eachAsync files, (file, name) ->
+			await recess.d.eachAsync files, (file, name) ->
 				tp = type file.contents
 
 				if tp is 'string'
@@ -28,16 +28,16 @@ module.exports = (punk) ->
 
 				else if tp is 'stream'
 					arr = await sta file.contents
-					arr = await punk.d.mapAsync arr, (contents) -> Buffer.from contents
+					arr = await recess.d.mapAsync arr, (contents) -> Buffer.from contents
 					modified = Buffer.contents arr	
 
 				files[name].contents = modified
 
 			f arguments...
 
-	punk.i.string = (f) ->
+	recess.i.string = (f) ->
 		(files) ->
-			await punk.d.eachAsync files, (file, name) ->
+			await recess.d.eachAsync files, (file, name) ->
 				tp = type file.contents
 
 				if tp is 'string'
@@ -48,7 +48,7 @@ module.exports = (punk) ->
 
 				else if tp is 'stream'
 					arr = await sta file.contents
-					arr = await punk.d.mapAsync arr, (contents) -> contents.toString()
+					arr = await recess.d.mapAsync arr, (contents) -> contents.toString()
 					modified = arr.join ''
 
 				files[name].contents = modified
@@ -61,9 +61,9 @@ module.exports = (punk) ->
 		s.push null
 		s
 
-	punk.i.stream = (f) ->
+	recess.i.stream = (f) ->
 		(files) ->
-			await punk.d.eachAsync files, (file, name) ->
+			await recess.d.eachAsync files, (file, name) ->
 				tp = type file.contents
 
 				if tp is 'string'
@@ -79,7 +79,7 @@ module.exports = (punk) ->
 
 			f arguments...
 
-	punk.i.any = (f) ->
+	recess.i.any = (f) ->
 		->
 			f arguments...
 

@@ -1,8 +1,8 @@
 gaze   = require 'gaze'
 fs     = require 'fs-extra'
 
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	startPipe = (files, task) ->
 		# pass files through pipes
 		for devnull, pipe of task.pipes
@@ -10,33 +10,36 @@ module.exports = (punk) ->
 
 		# convert files
 		if task.to and not (task.outFile or task.outDir or task.outDirectory)
-			await files.pipe punk.p.to(task.to)
+			await files.pipe recess.p.to(task.to)
 			task.outDir = './'
-			await files.pipe punk.p.write(task)
+			await files.pipe recess.p.write(task)
 		else if task.to
-			await files.pipe punk.p.to(task.to)
+			await files.pipe recess.p.to(task.to)
 
 		if task.min
-			await files.pipe punk.p.min()
+			await files.pipe recess.p.min()
 
-		await punk.run task.start if task.start and task.start.length > 0
+		await recess.run task.start if task.start and task.start.length > 0
 
 		# write files to FS
-		await files.pipe punk.p.write(task)
+		await files.pipe recess.p.write(task)
 
 
-	punk._runTask = (taskName, task) ->
+	recess._runTask = (taskName, task) ->
 		reporter.startingTask taskName
 
 		# set settings to standard format
-		task = punk.d.toSetting task
+		task = recess.d.toSetting task
 
-		files = punk.collection undefined, task
+		if task.watch
+			await return recess._watchTask taskName, task
 
-		await punk.run task.needs
+		files = recess.collection undefined, task
+
+		await recess.run task.needs
 
 		# load files
-		await files.pipe punk.p.add(task.entry)
+		await files.pipe recess.p.add(task.entry)
 
 		await startPipe files, task
 
@@ -44,8 +47,8 @@ module.exports = (punk) ->
 		reporter.finishedTask taskName
 		await return
 
-	punk._watchTask = (taskName, task) ->
-		task ?= punk._tasks[taskName]
+	recess._watchTask = (taskName, task) ->
+		task ?= recess._tasks[taskName]
 
 		if typeof task is 'function'
 			reporter.cantWatch taskName
@@ -54,22 +57,23 @@ module.exports = (punk) ->
 
 		# r._runTask taskName, task
 		# set settings to standard format
-		task = punk.d.toSetting task
+		task = recess.d.toSetting task
 
-		punk.watchTasks task.needs
+		recess.watchTasks task.needs
 
 		running = false
 
+		recess.dev.keepAlive()
 		# load files
 
 		changed = (rg) ->
 
-			files = punk.collection undefined, task
+			files = recess.collection undefined, task
 
 			if rg
-				await files.pipe punk.p.add([rg])
+				await files.pipe recess.p.add([rg])
 			else
-				await files.pipe punk.p.add(task.entry)
+				await files.pipe recess.p.add(task.entry)
 
 			await startPipe files, task
 
@@ -80,22 +84,22 @@ module.exports = (punk) ->
 		gaze task.entry, (err) ->
 			throw err if err
 			@on 'all', (event, path) -> 
-				await punk.d.sleep punk.config.changedDelay
+				await recess.d.sleep recess.config.changedDelay
 				await changed path
 
 		await return
 
-	punk.watch = (entry, task) ->
+	recess.watch = (entry, task) ->
 		unless task?
-			return await punk._watchTask entry[0]
+			return await recess._watchTask entry[0]
 
-		punk.dev.keepAlive()
+		recess.dev.keepAlive()
 		changed = (rg) ->
-			files = punk.collection undefined, task
+			files = recess.collection undefined, task
 			if rg
-				await files.pipe punk.p.add([rg])
+				await files.pipe recess.p.add([rg])
 			else
-				await files.pipe punk.p.add(entry)
+				await files.pipe recess.p.add(entry)
 
 			await task.call files
 
@@ -106,7 +110,7 @@ module.exports = (punk) ->
 		gaze entry, (err) ->
 			throw err if err
 			@on 'all', (event, path) -> 
-				await punk.d.sleep punk.config.changedDelay
+				await recess.d.sleep recess.config.changedDelay
 				await changed path
 
 		return

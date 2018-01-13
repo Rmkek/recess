@@ -4,8 +4,8 @@ net   = require 'net'
 { setImmediate } = require 'timers'
 deasync = require 'deasync'
 
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	d =
 		# CHECK FILE EXISTANCE #
 		exists: (pth) ->
@@ -58,10 +58,10 @@ module.exports = (punk) ->
 
 		# keep process alive
 		keepAlive: ->
-			unless punk.alive
+			unless recess.alive
 				net.createServer().listen()
 				
-			punk.alive = on
+			recess.alive = on
 
 		# difference between this functions is that getExt just returns extname, but getType returns true type of file
 		# e.g. you can rename pic.png to pic.jpg
@@ -105,17 +105,17 @@ module.exports = (punk) ->
 						Object.assign r, item
 
 					# add event
-					else if (typeof item is 'function') and item[punk.s.isEvent]
+					else if (typeof item is 'function') and item[recess.s.isEvent]
 						r.start ?= []
 						r.start.push item
 
 					# add pipe
-					else if (typeof item is 'function') and not item[punk.s.isSequence]
+					else if (typeof item is 'function') and not item[recess.s.isSequence]
 						r.pipes ?= []
 						r.pipes.push item
 
 					# add sequence
-					else if (typeof item is 'function') and item[punk.s.isSequence]
+					else if (typeof item is 'function') and item[recess.s.isSequence]
 						r.start ?= []
 						r.start.push item
 
@@ -152,9 +152,9 @@ module.exports = (punk) ->
 			setting.workdir  = setting.workdir or setting.dir   or setting.dirname or './'
 
 			if setting.workdir
-				setting.workdir = path.resolve(punk.dirname, setting.workdir)
+				setting.workdir = path.resolve(recess.dirname, setting.workdir)
 			else
-				setting.workdir = path.resolve(punk.dirname)
+				setting.workdir = path.resolve(recess.dirname)
 
 			setting
 
@@ -191,6 +191,16 @@ module.exports = (punk) ->
 			deasync.loopWhile -> not finished
 			r
 
+		once: do ->
+			did = []
 
-	punk.dev = d
-	punk.d   = d
+			(f, args = [], context) ->
+				if not did.indexOf f
+					if context
+						await f.apply(context, args)
+					else
+						await f args...
+					did.push f
+
+	recess.dev = d
+	recess.d   = d

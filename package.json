@@ -1,5 +1,5 @@
 {
-  "name": "punker",
+  "name": "recess",
   "version": "4.3.2",
   "description": "Simple and powerful build system",
   "main": "index.js",
@@ -7,13 +7,14 @@
   "license": "MIT",
   "private": false,
   "bin": {
-    "punker": "./bin/punker.js"
+    "recess": "./bin/recess.js"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-vue-app": "^2.0.0",
     "babelify": "^8.0.0",
+    "browser-sync": "^2.23.5",
     "browserify": "^14.5.0",
     "chalk": "^2.3.0",
     "commander": "^2.12.2",

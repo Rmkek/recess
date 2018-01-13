@@ -1,4 +1,4 @@
-module.exports = (punk) ->
+module.exports = (recess) ->
 	s =
 		entry:      { }
 		default:    Symbol 'some default value'
@@ -7,4 +7,4 @@ module.exports = (punk) ->
 
 	s.entry.outFile = s.entry
 
-	punk.s = punk.symbols = s
+	recess.s = recess.symbols = s

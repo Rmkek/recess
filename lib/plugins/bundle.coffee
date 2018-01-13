@@ -3,14 +3,14 @@ path       = require 'path'
 browserify = require 'browserify'
 babelify   = require 'babelify'
 
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	plugin = {}
 	plugin.pipes =
 		bundle: (bws = { presets: [ "env", "vue-app" ] }, bbs) ->
 			# PIPE #
-			punk.i.stream (files) ->
-				await punk.d.eachAsync files, (file) ->
+			recess.i.stream (files) ->
+				await recess.d.eachAsync files, (file) ->
 					new Promise (resolve, reject) ->
 						# new browserify bundle
 						

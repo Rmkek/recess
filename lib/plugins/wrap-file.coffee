@@ -1,17 +1,17 @@
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	plugin = {}
 	plugin.pipes =
 		header: (settings) ->
-			punk.i.buffer (files, cond) ->
+			recess.i.buffer (files, cond) ->
 				b = Buffer.from settings
-				await punk.d.eachAsync files, (file) ->
+				await recess.d.eachAsync files, (file) ->
 					file.contents = Buffer.concat [b, file.contents]
 				files
 		footer: (settings) ->
-			punk.i.buffer (files, cond) ->
+			recess.i.buffer (files, cond) ->
 				b = Buffer.from settings
-				await punk.d.eachAsync files, (file) ->
+				await recess.d.eachAsync files, (file) ->
 					file.contents = Buffer.concat [file.contents, b]
 				files
 

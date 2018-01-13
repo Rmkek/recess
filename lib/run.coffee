@@ -1,10 +1,10 @@
 uuid = require 'uuid/v1'
 mm   = require 'micromatch'
 
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 
-	punk._tasks = tasks = {}
+	recess._tasks = tasks = {}
 
 	getToRun = (ts) ->
 		ret = {}
@@ -21,62 +21,69 @@ module.exports = (punk) ->
 		ret
 
 
-	punk.task = punk.tasks = (task) ->
+	recess.task = recess.tasks = (task) ->
 		Object.assign tasks, task
 
-	punk.run = (ts) ->
+	recess.run = (ts) ->
 		ts = [ts] unless Array.isArray ts
 		toRun = getToRun ts
 		try
-			await punk.d.eachAsync toRun, (setting, name) ->
+			await recess.d.eachAsync toRun, (setting, name) ->
 				if typeof setting is 'function'
-					reporter.startingTask name
-					cont = punk.collection []
+					cont = recess.collection []
 
 					try
-						await (setting.call cont)
+
+						if !~recess._services.indexOf setting
+							reporter.startingTask name
+
+							await (setting.call cont)
+
+							recess._services.push setting
+
+							reporter.finishedTask name
+
 					catch e
 						reporter.error e
 					
-					reporter.finishedTask name
 				else
-					await punk._runTask name, setting
+					await recess._runTask name, setting
 		catch e
 			reporter.error e
 
-	punk.watchTasks = (ts) ->
+	recess.watchTasks = (ts) ->
 		ts = [ts] unless Array.isArray ts
 		toRun = getToRun ts
 		try
-			await punk.d.eachAsync toRun, (setting, name) ->
+			await recess.d.eachAsync toRun, (setting, name) ->
 				if typeof setting is 'function'
 					reporter.cantWatch name
 				else
-					await punk._watchTask name, setting
+					await recess._watchTask name, setting
 		catch e
 			reporter.error e
 
-	punk.startRun = () ->
+	recess.startRun = () ->
 		reporter.start()
-		reporter.usingConfig punk.filename
-		await punk.run arguments...
-		reporter.end() unless punk.alive
+		reporter.usingConfig recess.filename
+		await recess.run arguments...
+		reporter.end() unless recess.alive
 
-	punk.startWatch = () ->
+	recess.startWatch = () ->
 		reporter.startWatch()
-		reporter.usingConfig punk.filename
-		punk.d.keepAlive()		
-		await punk.watch arguments...
+		reporter.usingConfig recess.filename
+		recess.d.keepAlive()		
+		await recess.watch arguments...
 
-	punk.seq = punk.sequence = ->
-		tsks = punk.d.flat arguments
+	recess.seq = recess.sequence = ->
+		tsks = recess.d.flat arguments
 		r = () ->
 			for task in tsks
-				await punk.run task
-		r[punk.s.isSequence] = true
+				await recess.run task
+		r[recess.s.isSequence] = true
 		r
 
-	punk.e = punk.event = (f) ->
+	recess.e = recess.event = (f) ->
 		r = -> f()
-		r[punk.s.isEvent] = true
+		r[recess.s.isEvent] = true
 		r

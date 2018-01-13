@@ -2,13 +2,14 @@ module.exports = (config, cwd) ->
 	path    = require 'path'
 	process = require 'process'
 
-	punk =
+	recess =
 		filename: config
 		dirname:  path.dirname config
 
 		plugins:    {}
 		converters: {}
 		minifiers:  {}
+		fastTasks:  {}
 
 		# TODO: proxy config changes for merge changes with defaults
 
@@ -17,8 +18,8 @@ module.exports = (config, cwd) ->
 
 		ignored: []
 		ignore: (files) ->
-			if files is punk.s.default
-				punk.ignored = punk.ignored.concat [ 
+			if files is recess.s.default
+				recess.ignored = recess.ignored.concat [ 
 					'.git'
 					'.nyc_output'
 					'.sass-cache'
@@ -27,28 +28,30 @@ module.exports = (config, cwd) ->
 					'node_modules'
 				]
 			else
-				punk.ignored = punk.ignored.concat files
+				recess.ignored = recess.ignored.concat files
+
+		_services: []
 
 
 	# LOAD SEPARATED SCRIPTS
 
-	punk.p = punk.plugins
+	recess.p = recess.plugins
 
-	require(path.resolve __dirname, './symbols.js')  punk
-	require(path.resolve __dirname, './reporter.js') punk
-	require(path.resolve __dirname, './dev.js')      punk
-	require(path.resolve __dirname, './run-task.js') punk
-	require(path.resolve __dirname, './run.js')      punk
-	require(path.resolve __dirname, './use.js')      punk
-	require(path.resolve __dirname, './file.js')     punk
-	require(path.resolve __dirname, './inputs.js')   punk
+	require(path.resolve __dirname, './symbols.js')  recess
+	require(path.resolve __dirname, './reporter.js') recess
+	require(path.resolve __dirname, './dev.js')      recess
+	require(path.resolve __dirname, './run-task.js') recess
+	require(path.resolve __dirname, './run.js')      recess
+	require(path.resolve __dirname, './use.js')      recess
+	require(path.resolve __dirname, './file.js')     recess
+	require(path.resolve __dirname, './inputs.js')   recess
 
 
 	#####################
 	# ADD BASIC PLUGINS #
 	#####################
 
-	punk.use [
+	recess.use [
 		require './plugins/bundle.js'
 		require './plugins/mute.js'
 		require './plugins/converter.js'
@@ -63,5 +66,5 @@ module.exports = (config, cwd) ->
 		require './plugins/remove.js'
 	]
 
-	return punk
+	return recess
 

@@ -15,15 +15,15 @@ normalize = (mode) ->
 
 	if called then newMode else mode
 
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	plugin = {}
 	plugin.pipes =
 		stat: (stat) ->
 			if typeof stat is 'object'
 				stat = normalize stat
 
-			punk.i.any (files, cond) ->
+			recess.i.any (files, cond) ->
 				for file in files
 
 					if typeof stat is 'number'

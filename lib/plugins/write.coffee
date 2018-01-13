@@ -1,28 +1,28 @@
 path = require 'path'
 fs   = require 'fs-extra'
 
-module.exports = (punk) ->
-	reporter = punk.reporter
+module.exports = (recess) ->
+	reporter = recess.reporter
 	plugin = {}
 	plugin.pipes =
 		write: (setting) ->
 
 			# PIPE #
-			punk.i.buffer (files, cond) ->
+			recess.i.buffer (files, cond) ->
 				workdir = setting.workdir or cond.workdir or './'
 
 				if files.length is 1 and setting.outFile?.length
 
-					if setting.outFile[0] is punk.s.entry
+					if setting.outFile[0] is recess.s.entry
 						setting.outFile = setting.entry
 
-					await punk.d.eachAsync setting.outFile, (pth) ->
+					await recess.d.eachAsync setting.outFile, (pth) ->
 						out = path.resolve   workdir, pth
-						to  = punk.d.getExt  out
-						rg  = punk.d.getType files[0]
+						to  = recess.d.getExt  out
+						rg  = recess.d.getType files[0]
 
 						if to isnt rg
-							files = await punk.p.to(to, false)(files, cond)
+							files = await recess.p.to(to, false)(files, cond)
 
 						await fs.remove out
 						await fs.writeFile out, files[0].contents, mode: files[0].stat.stat.mode
@@ -33,9 +33,9 @@ module.exports = (punk) ->
 					out = (setting.outDir or setting.outDirectory)
 
 					# if there are multiple files, write they to directory, which specified in setting.outDir
-					await punk.d.eachAsync out, (dir) ->
+					await recess.d.eachAsync out, (dir) ->
 
-						await punk.d.eachAsync files, (file) ->
+						await recess.d.eachAsync files, (file) ->
 							# absolute path
 							realPath = path.resolve(workdir, dir, file.path)
 

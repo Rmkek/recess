@@ -1,37 +1,40 @@
 resolve = require 'resolve'
 
-module.exports = (punk) ->
-	reporter = punk.reporter
-	punk._use = (plugin) ->
+module.exports = (recess) ->
+	reporter = recess.reporter
+	recess._use = (plugin) ->
 		return if plugin is undefined
 		reporter.pluginNotFound() unless plugin
 
 		# get plugin from string
 		if typeof plugin in ['string', 'number']
-			try pth = resolve.sync plugin, { basedir: punk.dirname }
+			try pth = resolve.sync plugin, { basedir: recess.dirname }
 
 			reporter.pluginNotFound(plugin) unless pth?
 			plugin = require pth
 
-		plugin = plugin punk, reporter if typeof plugin is 'function'
+		plugin = plugin recess, reporter if typeof plugin is 'function'
 
 		# merge
 
 		if plugin.pipes
 			for name, value of plugin.pipes
-				if punk.p[name]
+				if recess.p[name]
 					reporter.pluginsConflict(name)
 				else
-					punk.p[name] = value
+					recess.p[name] = value
 
 		if plugin.converters
-			Object.assign punk.converters, plugin.converters
+			Object.assign recess.converters, plugin.converters
 
 		if plugin.minifiers
-			Object.assign punk.minifiers, plugin.minifiers
+			Object.assign recess.minifiers, plugin.minifiers
+
+		if plugin.tasks
+			Object.assign recess.fastTasks, plugin.tasks
 
 
-	punk.use = ->
+	recess.use = ->
 		if arguments.length > 1
 			plugins = arguments
 		else if Array.isArray arguments[0]
@@ -40,4 +43,4 @@ module.exports = (punk) ->
 			plugins = [arguments[0]]
 
 		for name, plugin of plugins
-			punk._use plugin
+			recess._use plugin
