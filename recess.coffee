@@ -1,8 +1,8 @@
-use 'recess-mincss', 'recess-uglify', 'recess-htmlmin'
+use 'recess-uglify'
 
 tasks
 	js: [
-		entry: ['app/**/*.css', 'app/**/*.js', 'app/**/*.html']
+		entry: ['lib/**/*.js']
 		min
-		outDir: 'build'
+		outDir: 'out'
 	]

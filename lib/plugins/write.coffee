@@ -17,15 +17,16 @@ module.exports = (recess) ->
 						setting.outFile = setting.entry
 
 					await recess.d.eachAsync setting.outFile, (pth) ->
-						out = path.resolve   workdir, pth
-						to  = recess.d.getExt  out
-						rg  = recess.d.getType files[0]
+						if files[0].contents isnt undefined
+							out = path.resolve   workdir, pth
+							to  = recess.d.getExt  out
+							rg  = recess.d.getType files[0]
 
-						if to isnt rg
-							files = await recess.p.to(to, false)(files, cond)
+							if to isnt rg
+								files = await recess.p.to(to, false)(files, cond)
 
-						await fs.remove out
-						await fs.writeFile out, files[0].contents, mode: files[0].stat.stat.mode
+							await fs.remove out
+							await fs.writeFile out, files[0].contents, mode: files[0].stat.stat.mode
 
 				else if files.length is 0
 
@@ -40,13 +41,11 @@ module.exports = (recess) ->
 
 						await recess.d.eachAsync files, (file) ->
 							# absolute path
-							realPath = path.resolve(workdir, dir, file.path)
-
-							await fs.remove realPath
-
-							await fs.mkdirp path.dirname realPath
-
-							await fs.writeFile realPath, file.contents, mode: files[0].stat.stat.mode
+							if file.contents isnt undefined
+								realPath = path.resolve(workdir, dir, file.path)
+								await fs.remove realPath
+								await fs.mkdirp path.dirname realPath
+								await fs.writeFile realPath, file.contents, mode: files[0].stat.stat.mode
 							await return
 
 

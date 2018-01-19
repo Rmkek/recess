@@ -9,7 +9,7 @@ module.exports = (recess) ->
 			else if typeof settings isnt 'object'
 				settings = { output: settings, separator: '' }
 			else
-				reporter.error new Error 'Settings not defined!' 
+				reporter.fatal new Error 'Settings not defined!' 
 
 			# PIPE #
 			recess.i.buffer (files) ->

@@ -202,5 +202,8 @@ module.exports = (recess) ->
 						await f args...
 					did.push f
 
+		beep: ->
+			process.stdout.write '\u0007'
+
 	recess.dev = d
 	recess.d   = d

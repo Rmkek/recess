@@ -27,7 +27,7 @@ module.exports = (recess) ->
 				enumerable: true
 
 		toString: ->
-			"<File #{@path}: #{@contents}"
+			"<File #{@path}: #{@contents}>"
 
 		setExt: (newExt) ->
 			reporter.error 'ext is undefined' unless newExt?

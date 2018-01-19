@@ -3,9 +3,32 @@ up      = require 'find-up'
 gaze    = require 'gaze'
 
 d = (argv) ->
-	cwd = process.cwd()
-	pth  = await up ['Recess.js', 'recess.js', 'recess', 'Recess'], {cwd}
 
+	path    = require 'path'
+	fs      = require 'fs-extra'
+	program = require 'commander'
+
+	# FIND PACKAGE.JSON
+	pjPath   = path.resolve(__dirname, '../../package.json')
+	pjText   = (await fs.readFile pjPath).toString()
+	pj       = JSON.parse pjText
+
+	program
+		.version pj.version
+		.usage '[options] <task ...>'
+		.option '-w, --watch',         'Look after files'
+		.option '-c, --config <path>', 'Set config'
+		.option '-p, --production',    'Production mode'
+		.parse argv
+
+	# FIND CONFIG
+	cwd = process.cwd()
+	if program.config
+		pth = program.config
+	else
+		pth  = await up ['Recess.js', 'recess.js', 'recess', 'Recess'], {cwd}
+
+	# GET DATE
 	time = ->
 		dt = new Date
 
@@ -23,12 +46,18 @@ d = (argv) ->
 
 		"#{hoursString}:#{minutesString}:#{secondsString}"
 
+	upd = () ->
+		console.log()
+		console.log "  #{chalk.bold time()}   #{chalk.grey '»'} #{chalk.bold 'Config was changed!'}"
+		worker.destroy()
+		worker = cluster.fork()
+		worker.on 'message', onMessage
 
+	# CONFIG NOT FOUND MESSAGE
 	notFound = () ->
 		console.log "  #{chalk.bold.red time()}   #{chalk.red '»'} #{chalk.bold 'Config not found!'}"
 
 	notFound() unless pth
-
 
 	# START MASTER
 	if cluster.isMaster
@@ -42,18 +71,12 @@ d = (argv) ->
 
 
 
-		upd = () ->
-			console.log()
-			console.log "  #{chalk.bold time()}   #{chalk.grey '»'} #{chalk.bold 'Config was changed!'}"
-			worker.destroy()
-			worker = cluster.fork()
-			worker.on 'message', onMessage
-
 		console.log()
 		console.log "  #{chalk.bold time()}   #{chalk.grey '»'} #{chalk.bold 'Starting builder...'}"
 
+		# WATCH CONFIG
 		gaze pth, (err) ->
-			throw err if err
+			console.error err if err
 
 			@on 'delete', ->
 				console.log "  #{chalk.bold.red time()}   #{chalk.red '»'} #{chalk.bold 'Config was deleted!'}"
@@ -62,38 +85,9 @@ d = (argv) ->
 				upd()
 
 
-		# WATCH CONFIG
 
 	# START CHILD PROCESS FOR KILL IT AFTER :X
 	else
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		path    = require 'path'
-		fs      = require 'fs-extra'
-		program = require 'commander'
-
-		pjPath   = path.resolve(__dirname, '../../package.json')
-		pjText   = (await fs.readFile pjPath).toString()
-		pj       = JSON.parse pjText
-
-		program
-			.version pj.version
-			.usage '[options] <task ...>'
-			.option '-w, --watch', 'Look after files'
-			.option '-p, --production', 'Production mode'
-			.parse argv
 
 		run  = require './run.js'
 		init = require '../../index.js'
@@ -111,6 +105,7 @@ d = (argv) ->
 				uses:    recess.use
 				task:    recess.task
 				tasks:   recess.task
+
 
 				spawn:   recess.run
 				run: ->
@@ -132,8 +127,8 @@ d = (argv) ->
 				r:        recess.reporter
 				message:  recess.reporter.message
 				log:      recess.reporter.message
-				err:      recess.reporter.err
-				error:    recess.reporter.err
+				err:      recess.reporter.fatal
+				error:    recess.reporter.fatal
 				end:      recess.reporter.end
 				warn:     recess.reporter.warn
 
@@ -144,8 +139,8 @@ d = (argv) ->
 
 					warn:     recess.reporter.warn
 
-					err:      recess.reporter.err
-					error:    recess.reporter.err
+					err:      recess.reporter.fatal
+					error:    recess.reporter.fatal
 
 					info:     recess.reporter.dir
 
@@ -164,6 +159,8 @@ d = (argv) ->
 				plugins: recess.plugins
 				p:       recess.p
 				to:      recess.p.to
+				
+				bundle:  recess.p.bundle
 
 				wrap:      recess.p.wrap
 				unwrap:    recess.p.unwrap

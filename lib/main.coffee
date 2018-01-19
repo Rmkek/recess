@@ -52,7 +52,6 @@ module.exports = (config, cwd) ->
 	#####################
 
 	recess.use [
-		require './plugins/bundle.js'
 		require './plugins/mute.js'
 		require './plugins/converter.js'
 		require './plugins/minifier.js'

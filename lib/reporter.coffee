@@ -135,6 +135,14 @@ module.exports = (recess) ->
 				arr.join '\n'
 
 		error: (err) ->
+			recess.dev.beep()
+			reporter.warn err
+
+		fatal: (err) ->
+			recess.dev.beep()
+			unless Object.prototype.toString.call(err) is '[object Error]'
+				err = new Error err
+
 			ex 'error', =>
 				f = util.format err
 				arr = f.split '\n'
@@ -161,7 +169,7 @@ module.exports = (recess) ->
 					text   = jst chalk.bold.green 'Successfully built!'
 				suffix + timer + separator + text
 			reporter.render()
-			process.send 'BUILD FINISHED'
+			process.send? 'BUILD FINISHED'
 			process.exit()
 
 		# BASIC MESSAGES #

@@ -70,10 +70,13 @@ module.exports = (recess) ->
 
 			files = recess.collection undefined, task
 
-			if rg
-				await files.pipe recess.p.add([rg])
-			else
-				await files.pipe recess.p.add(task.entry)
+			try
+				if rg
+					await files.pipe recess.p.add([rg])
+				else
+					await files.pipe recess.p.add(task.entry)
+			catch e
+				reporter.warn e
 
 			await startPipe files, task
 

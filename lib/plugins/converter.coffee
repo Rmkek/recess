@@ -4,7 +4,7 @@ module.exports = (recess) ->
 	plugin.pipes =
 		convert: (settings, tr) ->
 			if typeof settings not in ['number', 'string']
-				reporter.error 'Setting must be a number or string!'
+				reporter.fatal 'Setting must be a number or string!'
 
 
 			recess.i.buffer (files, cond) ->
